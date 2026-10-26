@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width,initial-scale=1" name="viewport" />
+        <title>Ergo Proxy</title>
+        <link href="/common/style.css" rel="stylesheet" />
+        <script defer src="/common/navigation.js"></script>
+        <script defer src="/common/anime-api.js"></script>
+        <script defer src="/download/download.js"></script>
+        <script defer src="/download/original.js"></script>
+        <script defer src="/download/subtitles.js"></script>
+        <link href="/playback/dist/playback.css" rel="stylesheet" />
+        <script defer src="/common/playback-launcher.js"></script>
+    </head>
+    <body data-page="download">
+        <header class="site-header">
+            <a class="brand" href="/" aria-label="Ergo Proxy — trang chính">◈ ERGO PROXY</a>
+        </header>
+        <main>
+            <div id="page-toolbar" class="playback-launch">
+                <div><button id="view-back" class="back-button secondary" type="button" hidden>← Quay lại</button></div>
+                <div class="playback-actions">
+                    <button id="choose-video">▶ Chọn video</button
+                    ><button id="choose-folder" class="secondary">Chọn thư mục</button
+                    ><button id="server-library" class="secondary">Mở thư viện đã cấu hình</button>
+                </div>
+            </div>
+            <p id="playback-status" role="status"></p>
+            <div id="playback-root"></div>
+            <div aria-live="polite" id="message" role="status"></div>
+            <section hidden id="selection">
+                <div class="section-head">
+                    <div>
+                        <h2 id="anime-title" tabindex="-1"></h2>
+                    </div>
+                    <label><input id="all" type="checkbox" /> Tải toàn bộ tập</label>
+                </div>
+                <div class="episodes" id="episodes"></div>
+                <div class="options">
+                    <label
+                        >Nguồn file gốc
+                        <select id="original-server">
+                            <option>HD-2</option>
+                            <option>HD-1</option>
+                        </select></label
+                    ><label
+                        >Phiên bản
+                        <select id="audio">
+                            <option value="sub">Sub • Tiếng Nhật</option>
+                            <option value="dub">Dub • Tiếng Anh</option>
+                        </select></label
+                    >
+                    <button id="download">Tải file gốc các tập đã chọn ↓</button>
+                </div>
+                <details>
+                    <summary>Nhập link trang Download nếu không lấy được tự động</summary>
+                    <input
+                        aria-label="Link trang Download FlixCloud"
+                        id="original-page"
+                        placeholder="https://flixcloud.cc/d/…"
+                        type="url"
+                    />
+                </details>
+            </section>
+            <section aria-label="Phụ đề OpenSubtitles" hidden id="subtitle-panel">
+                <div class="eyebrow">PHỤ ĐỀ RỜI / OPENSUBTITLES</div>
+                <h2>Tải phụ đề cho anime đã chọn</h2>
+                <p>
+                    Chọn các tập phía trên, ngôn ngữ và mùa, rồi tìm phụ đề. Kiểm tra tên phim và bản phát hành trước
+                    khi tải; phụ đề khác bản video có thể lệch thời gian.
+                </p>
+                <p id="subtitle-config" role="status"></p>
+                <div class="options">
+                    <label
+                        >Ngôn ngữ
+                        <select id="subtitle-language">
+                            <option value="vi">Tiếng Việt</option>
+                            <option value="en">Tiếng Anh</option>
+                            <option value="ja">Tiếng Nhật</option>
+                        </select></label
+                    >
+                    <label
+                        >Mùa <input id="subtitle-season" max="1000" min="1" style="width: 80px" type="number" value="1"
+                    /></label>
+                    <input id="subtitle-imdb" type="hidden" value="" />
+                    <button id="subtitle-search">Tìm sub các tập đã chọn</button>
+                    <button id="subtitle-full">Tải full sub (ZIP)</button>
+                </div>
+                <p aria-live="polite" id="subtitle-status" role="status"></p>
+                <div class="files" id="subtitle-results"></div>
+                <button hidden id="subtitle-save-all">Tải các sub đã chọn (ZIP)</button>
+                <div class="options">
+                    <div>
+                        <h2>Tải trọn bộ video + sub đã chọn</h2>
+                        <p>
+                            Đóng gói ZIP: Tên anime / EP1 / video + sub tương ứng. Dùng bản sub đã chọn ở trên; tập chưa
+                            chọn sub sẽ tự lấy bản đầu tiên. Giải nén ZIP vào Videos để có cấu trúc thư mục này. Nếu có
+                            tập lỗi hoặc thiếu sub, xem DOWNLOAD-REPORT.txt trong ZIP.
+                        </p>
+                    </div>
+                    <button id="download-bundle">Tải video + sub theo thư mục EP ↓</button>
+                </div>
+            </section>
+            <footer class="contact-footer">
+                <a href="https://github.com/phamthanhhieu-dev" target="_blank" rel="noopener noreferrer"
+                    >GitHub · phamthanhhieu-dev</a
+                >
+                <a href="mailto:pth29jan@gmail.com">pth29jan@gmail.com</a>
+            </footer>
+        </main>
+    </body>
+</html>

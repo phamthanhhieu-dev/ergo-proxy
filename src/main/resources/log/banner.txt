@@ -1,0 +1,11 @@
+=====================================================================================================
+
+         EEEEE  RRRR    GGGG   OOO       PPPP   RRRR    OOO   X   X  Y   Y
+         E      R   R  G      O   O      P   P  R   R  O   O   X X    Y Y
+         EEEE   RRRR   G  GG  O   O      PPPP   RRRR   O   O    X      Y
+         E      R  R   G   G  O   O      P      R  R   O   O   X X     Y
+         EEEEE  R   R   GGGG   OOO       P      R   R   OOO   X   X    Y
+
+                                  E R G O   P R O X Y
+
+=====================================================================================================

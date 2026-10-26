@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width,initial-scale=1" name="viewport" />
+        <title>Ergo Proxy</title>
+        <link href="/common/style.css" rel="stylesheet" />
+        <script defer src="/common/navigation.js"></script>
+        <script defer src="/common/anime-api.js"></script>
+        <script defer src="/search/search.js"></script>
+        <link href="/playback/dist/playback.css" rel="stylesheet" />
+        <script defer src="/common/playback-launcher.js"></script>
+    </head>
+    <body data-page="main">
+        <header class="site-header">
+            <a class="brand" href="/" aria-label="Ergo Proxy — trang chính">◈ ERGO PROXY</a>
+        </header>
+        <main>
+            <div id="page-toolbar" class="playback-launch">
+                <div><button id="view-back" class="back-button secondary" type="button" hidden>← Quay lại</button></div>
+                <div class="playback-actions">
+                    <button id="choose-video">▶ Chọn video</button
+                    ><button id="choose-folder" class="secondary">Chọn thư mục</button
+                    ><button id="server-library" class="secondary">Mở thư viện đã cấu hình</button>
+                </div>
+            </div>
+            <p id="playback-status" role="status"></p>
+            <div id="playback-root"></div>
+            <div class="source-picker">
+                <label for="anime-source"
+                    >Nguồn phim
+                    <select id="anime-source">
+                        <option value="reanime">ReAnime</option>
+                    </select>
+                </label>
+                <span id="source-description">Tìm kiếm và tải phim từ ReAnime • Phụ đề từ OpenSubtitles</span>
+            </div>
+            <div id="search-screen">
+                <form id="search">
+                    <input
+                        aria-label="Tên anime hoặc đường dẫn"
+                        id="query"
+                        maxlength="200"
+                        placeholder="Tên anime hoặc link reanime.to…"
+                        required
+                    />
+                    <button>Tìm anime ↗</button>
+                </form>
+                <section aria-label="Kết quả tìm kiếm" class="results" id="results"></section>
+            </div>
+            <div aria-live="polite" id="message" role="status"></div>
+            <footer class="contact-footer">
+                <a href="https://github.com/phamthanhhieu-dev" target="_blank" rel="noopener noreferrer"
+                    >GitHub · phamthanhhieu-dev</a
+                >
+                <a href="mailto:pth29jan@gmail.com">pth29jan@gmail.com</a>
+            </footer>
+        </main>
+    </body>
+</html>

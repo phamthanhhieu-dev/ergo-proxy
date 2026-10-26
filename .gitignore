@@ -1,0 +1,27 @@
+target/
+.tools/
+.venv/
+.idea/
+data/
+*.log
+
+node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python virtual environment and cache
+.venv/
+__pycache__/
+*.py[cod]
+
+# Maven build output
+target/
+
+# IDE settings
+.idea/
+
+# Agent instructions
+AGENTS.md

@@ -1,0 +1,826 @@
+[
+    {
+        "code": "VOHC_00001",
+        "domain": "OriginalHttpClient",
+        "method": "validate",
+        "key": "original.host.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "VROHC_00001",
+        "domain": "OriginalHttpClient",
+        "method": "validateRedirect",
+        "key": "original.redirect.host.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "OOHC_00001",
+        "domain": "OriginalHttpClient",
+        "method": "open",
+        "key": "original.connection.failed",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "JOHC_00001",
+        "domain": "OriginalHttpClient",
+        "method": "json",
+        "key": "original.metadata.too.large",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "IHLI_00001",
+        "domain": "HttpLoggingInterceptor",
+        "method": "intercept",
+        "key": "request.external.call.failed",
+        "file": "src/main/java/com/ergoproxy/platform/config/logging/HttpLoggingInterceptor.java",
+        "active": true
+    },
+    {
+        "code": "BBWGRA_00001",
+        "domain": "GlobalResponseAdvice",
+        "method": "beforeBodyWrite",
+        "key": "request.response.serialization.failed",
+        "file": "src/main/java/com/ergoproxy/platform/config/web/GlobalResponseAdvice.java",
+        "active": true
+    },
+    {
+        "code": "HVEGEH_00001",
+        "domain": "GlobalExceptionHandler",
+        "method": "handleValidationException",
+        "key": "request.data.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/exception/GlobalExceptionHandler.java",
+        "active": true
+    },
+    {
+        "code": "HBRGEH_00001",
+        "domain": "GlobalExceptionHandler",
+        "method": "handleBadRequest",
+        "key": "request.parameters.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/exception/GlobalExceptionHandler.java",
+        "active": true
+    },
+    {
+        "code": "HEGEH_00001",
+        "domain": "GlobalExceptionHandler",
+        "method": "handleException",
+        "key": "request.http.failed",
+        "file": "src/main/java/com/ergoproxy/platform/exception/GlobalExceptionHandler.java",
+        "active": true
+    },
+    {
+        "code": "RAS_00001",
+        "domain": "AnimeSource",
+        "method": "resolve",
+        "key": "anime.source.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/AnimeSourceServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CD_00001",
+        "domain": "Download",
+        "method": "create",
+        "key": "download.episodes.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "DD_00001",
+        "domain": "Download",
+        "method": "download",
+        "key": "download.video.not.found",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "JD_00001",
+        "domain": "Download",
+        "method": "job",
+        "key": "download.id.not.found",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SSD_00001",
+        "domain": "Download",
+        "method": "saveSubtitle",
+        "key": "subtitle.language.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FD_00001",
+        "domain": "Download",
+        "method": "file",
+        "key": "download.file.not.found",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PEB_00001",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "WEB_00001",
+        "domain": "EpisodeBundle",
+        "method": "write",
+        "key": "bundle.source.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CNFP_00001",
+        "domain": "NativeFilePicker",
+        "method": "choose",
+        "key": "library.picker.type.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/NativeFilePickerServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "VALOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "validateApiLink",
+        "key": "subtitle.api.redirect.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "VLOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "validateLink",
+        "key": "subtitle.download.host.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RKOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "requireKey",
+        "key": "subtitle.api.key.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "BOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "bearer",
+        "key": "subtitle.login.token.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "VSOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "validateSearch",
+        "key": "subtitle.search.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SJOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "searchJson",
+        "key": "subtitle.redirect.repeated",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RSROS_00001",
+        "domain": "OpenSubtitle",
+        "method": "readSearchResponse",
+        "key": "subtitle.redirect.location.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "DOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "download",
+        "key": "subtitle.file.id.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RDOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "requestDownload",
+        "key": "subtitle.download.link.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "DFOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "downloadFile",
+        "key": "subtitle.download.file.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RFROS_00001",
+        "domain": "OpenSubtitle",
+        "method": "readFileResponse",
+        "key": "subtitle.download.redirect.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "AEOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "apiError",
+        "key": "subtitle.authentication.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "NDOS_00001",
+        "domain": "OpenSubtitle",
+        "method": "nativeDownload",
+        "key": "subtitle.file.id.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PPOD_00001",
+        "domain": "OriginalDownload",
+        "method": "parsePage",
+        "key": "original.page.data.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "POD_00001",
+        "domain": "OriginalDownload",
+        "method": "prepare",
+        "key": "original.queue.full",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "ASOD_00001",
+        "domain": "OriginalDownload",
+        "method": "awaitSource",
+        "key": "original.source.timeout",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "TOD_00001",
+        "domain": "OriginalDownload",
+        "method": "ticket",
+        "key": "original.id.not.found",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "COD_00001",
+        "domain": "OriginalDownload",
+        "method": "content",
+        "key": "original.file.not.ready",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "DCOD_00001",
+        "domain": "OriginalDownload",
+        "method": "downloadContent",
+        "key": "original.video.incomplete",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PPL_00001",
+        "domain": "PlaybackLibrary",
+        "method": "pick",
+        "key": "library.picker.busy",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SLPL_00001",
+        "domain": "PlaybackLibrary",
+        "method": "scanLibrary",
+        "key": "library.video.required",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CPL_00001",
+        "domain": "PlaybackLibrary",
+        "method": "collect",
+        "key": "library.scan.limit",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RPL_00001",
+        "domain": "PlaybackLibrary",
+        "method": "register",
+        "key": "library.registry.limit",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FPL_00001",
+        "domain": "PlaybackLibrary",
+        "method": "find",
+        "key": "library.file.missing",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "VQR_00001",
+        "domain": "Reanime",
+        "method": "validateQuery",
+        "key": "anime.query.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "VSR_00001",
+        "domain": "Reanime",
+        "method": "validateSlug",
+        "key": "anime.id.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RPOR_00001",
+        "domain": "Reanime",
+        "method": "readProcessOutput",
+        "key": "anime.process.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "AOR_00001",
+        "domain": "Reanime",
+        "method": "appendOutput",
+        "key": "anime.process.response.too.large",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "WFPR_00001",
+        "domain": "Reanime",
+        "method": "waitForProcess",
+        "key": "anime.process.timeout",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CRR_00001",
+        "domain": "Reanime",
+        "method": "collectResult",
+        "key": "anime.process.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "DPR_00001",
+        "domain": "Reanime",
+        "method": "downloadPage",
+        "key": "original.player.link.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "LSR_00001",
+        "domain": "Reanime",
+        "method": "loadServers",
+        "key": "original.anilist.id.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FER_00001",
+        "domain": "Reanime",
+        "method": "findEmbed",
+        "key": "original.server.not.found",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PSA_00001",
+        "domain": "SubtitleArchive",
+        "method": "prepare",
+        "key": "subtitle.archive.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/SubtitleArchiveServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FSD_00001",
+        "domain": "SubtitleDiagnostics",
+        "method": "failure",
+        "key": "subtitle.connection.dns.failed",
+        "file": "src/main/java/com/ergoproxy/platform/util/SubtitleDiagnostics.java",
+        "active": true
+    },
+    {
+        "code": "SPL_00001",
+        "domain": "PlaybackLibrary",
+        "method": "select",
+        "key": "library.picker.headless",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": false
+    },
+    {
+        "code": "OOHC_00002",
+        "domain": "OriginalHttpClient",
+        "method": "open",
+        "key": "original.redirect.location.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "JOHC_00002",
+        "domain": "OriginalHttpClient",
+        "method": "json",
+        "key": "original.metadata.json.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "IHLI_00002",
+        "domain": "HttpLoggingInterceptor",
+        "method": "intercept",
+        "key": "request.external.call.failed",
+        "file": "src/main/java/com/ergoproxy/platform/config/logging/HttpLoggingInterceptor.java",
+        "active": true
+    },
+    {
+        "code": "HEGEH_00002",
+        "domain": "GlobalExceptionHandler",
+        "method": "handleException",
+        "key": "request.unexpected.failed",
+        "file": "src/main/java/com/ergoproxy/platform/exception/GlobalExceptionHandler.java",
+        "active": true
+    },
+    {
+        "code": "CD_00002",
+        "domain": "Download",
+        "method": "create",
+        "key": "download.queue.full",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SSD_00002",
+        "domain": "Download",
+        "method": "saveSubtitle",
+        "key": "download.video.not.completed",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PEB_00002",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "WEB_00002",
+        "domain": "EpisodeBundle",
+        "method": "write",
+        "key": "bundle.source.timeout",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CNFP_00002",
+        "domain": "NativeFilePicker",
+        "method": "choose",
+        "key": "library.picker.windows.required",
+        "file": "src/main/java/com/ergoproxy/platform/service/NativeFilePickerServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SJOS_00002",
+        "domain": "OpenSubtitle",
+        "method": "searchJson",
+        "key": "subtitle.redirect.too.many",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RSROS_00002",
+        "domain": "OpenSubtitle",
+        "method": "readSearchResponse",
+        "key": "subtitle.http.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "DFOS_00002",
+        "domain": "OpenSubtitle",
+        "method": "downloadFile",
+        "key": "subtitle.download.file.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RFROS_00002",
+        "domain": "OpenSubtitle",
+        "method": "readFileResponse",
+        "key": "subtitle.download.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "AEOS_00002",
+        "domain": "OpenSubtitle",
+        "method": "apiError",
+        "key": "subtitle.quota.exceeded",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "POD_00002",
+        "domain": "OriginalDownload",
+        "method": "prepare",
+        "key": "original.page.url.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "ASOD_00002",
+        "domain": "OriginalDownload",
+        "method": "awaitSource",
+        "key": "original.source.preparation.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "COD_00002",
+        "domain": "OriginalDownload",
+        "method": "content",
+        "key": "original.file.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SLPL_00002",
+        "domain": "PlaybackLibrary",
+        "method": "scanLibrary",
+        "key": "library.scan.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PSA_00002",
+        "domain": "SubtitleArchive",
+        "method": "prepare",
+        "key": "subtitle.archive.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/SubtitleArchiveServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FSD_00002",
+        "domain": "SubtitleDiagnostics",
+        "method": "failure",
+        "key": "subtitle.connection.tls.failed",
+        "file": "src/main/java/com/ergoproxy/platform/util/SubtitleDiagnostics.java",
+        "active": true
+    },
+    {
+        "code": "SPL_00002",
+        "domain": "PlaybackLibrary",
+        "method": "select",
+        "key": "library.picker.busy",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": false
+    },
+    {
+        "code": "OOHC_00003",
+        "domain": "OriginalHttpClient",
+        "method": "open",
+        "key": "original.http.failed",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "SSD_00003",
+        "domain": "Download",
+        "method": "saveSubtitle",
+        "key": "subtitle.file.already.exist",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PEB_00003",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "WEB_00003",
+        "domain": "EpisodeBundle",
+        "method": "write",
+        "key": "bundle.status.cancelled",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CNFP_00003",
+        "domain": "NativeFilePicker",
+        "method": "choose",
+        "key": "library.picker.timeout",
+        "file": "src/main/java/com/ergoproxy/platform/service/NativeFilePickerServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "AEOS_00003",
+        "domain": "OpenSubtitle",
+        "method": "apiError",
+        "key": "subtitle.http.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "POD_00003",
+        "domain": "OriginalDownload",
+        "method": "prepare",
+        "key": "original.request.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "ASOD_00003",
+        "domain": "OriginalDownload",
+        "method": "awaitSource",
+        "key": "original.source.disconnected",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "COD_00003",
+        "domain": "OriginalDownload",
+        "method": "content",
+        "key": "original.request.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/OriginalDownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PSA_00003",
+        "domain": "SubtitleArchive",
+        "method": "prepare",
+        "key": "subtitle.archive.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/SubtitleArchiveServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FSD_00003",
+        "domain": "SubtitleDiagnostics",
+        "method": "failure",
+        "key": "subtitle.connection.timeout",
+        "file": "src/main/java/com/ergoproxy/platform/util/SubtitleDiagnostics.java",
+        "active": true
+    },
+    {
+        "code": "SPL_00003",
+        "domain": "PlaybackLibrary",
+        "method": "select",
+        "key": "library.picker.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": false
+    },
+    {
+        "code": "OOHC_00004",
+        "domain": "OriginalHttpClient",
+        "method": "open",
+        "key": "original.redirect.too.many",
+        "file": "src/main/java/com/ergoproxy/platform/config/client/OriginalHttpClient.java",
+        "active": true
+    },
+    {
+        "code": "SSD_00004",
+        "domain": "Download",
+        "method": "saveSubtitle",
+        "key": "subtitle.file.already.exist.generic",
+        "file": "src/main/java/com/ergoproxy/platform/service/DownloadServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PEB_00004",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CNFP_00004",
+        "domain": "NativeFilePicker",
+        "method": "choose",
+        "key": "library.picker.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/NativeFilePickerServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PSA_00004",
+        "domain": "SubtitleArchive",
+        "method": "prepare",
+        "key": "subtitle.archive.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/SubtitleArchiveServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FSD_00004",
+        "domain": "SubtitleDiagnostics",
+        "method": "failure",
+        "key": "subtitle.connection.failed",
+        "file": "src/main/java/com/ergoproxy/platform/util/SubtitleDiagnostics.java",
+        "active": true
+    },
+    {
+        "code": "SPL_00004",
+        "domain": "PlaybackLibrary",
+        "method": "select",
+        "key": "library.picker.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": false
+    },
+    {
+        "code": "PEB_00005",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CNFP_00005",
+        "domain": "NativeFilePicker",
+        "method": "choose",
+        "key": "library.picker.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/NativeFilePickerServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PSA_00005",
+        "domain": "SubtitleArchive",
+        "method": "prepare",
+        "key": "subtitle.archive.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/SubtitleArchiveServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FSD_00005",
+        "domain": "SubtitleDiagnostics",
+        "method": "failure",
+        "key": "subtitle.response.json.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/util/SubtitleDiagnostics.java",
+        "active": true
+    },
+    {
+        "code": "PEB_00006",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "CNFP_00006",
+        "domain": "NativeFilePicker",
+        "method": "choose",
+        "key": "library.picker.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/NativeFilePickerServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "PSA_00006",
+        "domain": "SubtitleArchive",
+        "method": "prepare",
+        "key": "subtitle.archive.request.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/SubtitleArchiveServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "FSD_00006",
+        "domain": "SubtitleDiagnostics",
+        "method": "failure",
+        "key": "subtitle.request.failed",
+        "file": "src/main/java/com/ergoproxy/platform/util/SubtitleDiagnostics.java",
+        "active": true
+    },
+    {
+        "code": "PEB_00007",
+        "domain": "EpisodeBundle",
+        "method": "prepare",
+        "key": "bundle.subtitle.key.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    }
+]
