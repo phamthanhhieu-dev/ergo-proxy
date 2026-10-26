@@ -13,8 +13,12 @@ export class VideoPlayer {
     }
     async open(entry) {
         this.stop();
-        this.video.src = fileUrl(entry.video.id);
+        this.video.src = entry.video.url || fileUrl(entry.video.id);
         this.video.load();
-        this.report('Đang đọc file gốc từ ổ đĩa • Hỗ trợ tua • Không chuyển mã video.');
+        this.report(
+            entry.video.url
+                ? 'Đang đọc video trên thiết bị • Không tải video lên server.'
+                : 'Đang đọc thư viện trên máy host • Hỗ trợ tua • Không chuyển mã video.'
+        );
     }
 }

@@ -281,34 +281,6 @@ public final class Const {
         private Version() {}
     }
 
-    public static final class NativePicker {
-
-        public static final String FILE = "file";
-        public static final String FOLDER = "folder";
-        public static final String OS_NAME = "os.name";
-        public static final String WINDOWS = "windows";
-        public static final String RESOURCE = "native/windows-file-picker.ps1";
-        public static final String TEMP_PREFIX = "ergo-picker-";
-        public static final String SCRIPT_EXTENSION = ".ps1";
-        public static final String OUTPUT_EXTENSION = ".txt";
-        public static final String MODE_OPTION = "-Mode";
-        public static final String DIRECTORY_OPTION = "-InitialDirectory";
-        public static final String TITLE_OPTION = "-Title";
-        public static final int MAX_OUTPUT_BYTES = 65536;
-        public static final java.util.List<String> COMMAND_OPTIONS = java.util.List.of(
-            "-NoLogo",
-            "-NoProfile",
-            "-Sta",
-            "-WindowStyle",
-            "Hidden",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-File"
-        );
-
-        private NativePicker() {}
-    }
-
     public static final class Playback {
 
         public static final java.util.Set<String> VIDEO_EXTENSIONS = java.util.Set.of("mp4", "m4v", "mkv", "webm", "mov", "avi", "ts");

@@ -1,4 +1,5 @@
 import './playback.css';
+import { BrowserLibrary } from '../../common/browser-library';
 import { request, fileUrl, text } from './api';
 import { VideoPlayer } from './player';
 import { PlayerControls } from './player-controls';
@@ -38,6 +39,7 @@ const controls = new PlayerControls(video, {
     },
     onError: report
 });
+const browserLibrary = new BrowserLibrary();
 let entries = [];
 let selected = null;
 let subtitleFiles = [];
@@ -77,7 +79,12 @@ function setLibrary(data) {
         text(el('playback-status'), data.name ? 'Thư mục chưa có video được hỗ trợ.' : 'Đã hủy chọn video.');
         return;
     }
-    sessionStorage.setItem('ergo.library', JSON.stringify(data));
+    player.stop();
+    const pageUrl = new URL(location.href);
+    pageUrl.searchParams.delete('local');
+    history.replaceState(history.state, '', pageUrl.pathname + pageUrl.search);
+    sessionStorage.setItem('ergo.playback-mode', data.local ? 'local' : 'server');
+    sessionStorage.removeItem('ergo.library');
     entries = data.videos;
     const series = [...new Set(entries.map((entry) => entry.series))];
     el('library-series').replaceChildren(...series.map((name) => new Option(name, name)));
@@ -85,27 +92,29 @@ function setLibrary(data) {
     showPlayer();
     refreshEpisodes();
     const savedId = sessionStorage.getItem('ergo.video');
-    const initial = entries.find((entry) => entry.video.id === savedId) || entries[0];
+    const savedName = localStorage.getItem('playback.last-video');
+    const initial =
+        entries.find((entry) => entry.video.id === savedId) ||
+        entries.find((entry) => entry.video.name === savedName) ||
+        entries[0];
     void openVideo(initial);
 }
-async function loadLibrary(picker) {
-    el('choose-video').disabled = true;
-    el('choose-folder').disabled = true;
-    el('server-library').disabled = true;
-    text(el('playback-status'), picker ? 'Chọn video hoặc thư mục trong cửa sổ trên máy tính…' : 'Đang đọc thư viện…');
+async function loadLibrary() {
+    const buttons = ['choose-video', 'choose-folder', 'server-library'].map(el);
+    for (const button of buttons) {
+        button.disabled = true;
+    }
+    text(el('playback-status'), 'Đang đọc thư viện trên máy host…');
     try {
-        setLibrary(
-            await request(
-                picker ? '/selection?type=' + encodeURIComponent(picker) : '/library',
-                picker ? { method: 'POST' } : {}
-            )
-        );
+        const library = await request('/library');
+        setLibrary(library);
+        browserLibrary.dispose();
     } catch (error) {
         text(el('playback-status'), error.message);
     } finally {
-        el('choose-video').disabled = false;
-        el('choose-folder').disabled = false;
-        el('server-library').disabled = false;
+        for (const button of buttons) {
+            button.disabled = false;
+        }
     }
 }
 async function openVideo(entry) {
@@ -118,7 +127,10 @@ async function openVideo(entry) {
     refreshEpisodes();
     text(el('watch-title'), `${entry.series} • ${entry.episode}`);
     text(el('playback-status'), entry.video.name);
-    subtitleFiles = entry.subtitles.map((file) => ({ ...file, url: fileUrl(file.id) }));
+    subtitleFiles = entry.subtitles.map((file) => ({
+        ...file,
+        url: file.url || fileUrl(file.id)
+    }));
     el('local-subtitles').replaceChildren(
         new Option('Tắt phụ đề', ''),
         ...subtitleFiles.map((file, index) => new Option(file.name, String(index)))
@@ -180,7 +192,7 @@ async function chooseSubtitle() {
         if (version !== subGeneration) {
             return;
         }
-        await renderer.load(bytes, file.name, selected?.fonts.map((font) => fileUrl(font.id)) || []);
+        await renderer.load(bytes, file.name, selected?.fonts.map((font) => font.url || fileUrl(font.id)) || []);
         if (version === subGeneration) {
             subtitleReport('Đang dùng: ' + file.name);
         }
@@ -211,9 +223,11 @@ function stepDelay(step) {
     el('subtitle-delay').value = String(Math.round((settings().delay + step) * 100) / 100);
     void applySettings();
 }
-el('choose-video').onclick = () => loadLibrary('file');
-el('choose-folder').onclick = () => loadLibrary('folder');
-el('server-library').onclick = () => loadLibrary(false);
+el('choose-video').onclick = () =>
+    browserLibrary.choose(false, setLibrary, (message) => text(el('playback-status'), message));
+el('choose-folder').onclick = () =>
+    browserLibrary.choose(true, setLibrary, (message) => text(el('playback-status'), message));
+el('server-library').onclick = () => loadLibrary();
 el('library-series').onchange = refreshEpisodes;
 el('local-subtitles').onchange = chooseSubtitle;
 window.addEventListener('ergo:viewchange', (event) => {
@@ -287,7 +301,10 @@ el('add-subtitle').onchange = async (event) => {
         if (file.size > 8 * 1024 * 1024) {
             throw new Error('Phụ đề vượt giới hạn 8 MB.');
         }
-        subtitleFiles.push({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
+        subtitleFiles.push({
+            name: file.name,
+            bytes: new Uint8Array(await file.arrayBuffer())
+        });
         el('local-subtitles').append(new Option(file.name, String(subtitleFiles.length - 1)));
         el('local-subtitles').value = String(subtitleFiles.length - 1);
         await chooseSubtitle();
@@ -311,13 +328,25 @@ video.addEventListener('ended', () => {
         report('Đã hết tập. Bấm Tập tiếp để xem ' + next.episode);
     }
 });
-window.addEventListener('pagehide', () => player.stop());
+window.addEventListener('pagehide', (event) => {
+    player.stop();
+    if (!event.persisted) {
+        browserLibrary.dispose();
+    }
+});
 
-const savedLibrary = JSON.parse(sessionStorage.getItem('ergo.library') || 'null');
-if (savedLibrary) {
-    setLibrary(savedLibrary);
+const localChoice = new URLSearchParams(location.search).get('local');
+const localMode = Boolean(localChoice) || sessionStorage.getItem('ergo.playback-mode') === 'local';
+if (localMode) {
+    showPlayer();
+    text(el('watch-title'), 'Chọn video trên thiết bị');
+    text(
+        el('playback-status'),
+        'Chọn video và sub cùng lúc, hoặc chọn thư mục để tự nhận video/sub theo từng EP. File không được tải lên server; sau khi tải lại trang cần chọn lại.'
+    );
+    el(localChoice === 'folder' ? 'choose-folder' : 'choose-video').focus();
 } else {
-    void loadLibrary(false);
+    void loadLibrary();
 }
 
 window.addEventListener('pageshow', (event) => {
