@@ -2,14 +2,19 @@ import './playback.css';
 import { BrowserLibrary } from '../../common/browser-library';
 import { request, fileUrl, text } from './api';
 import { VideoPlayer } from './player';
-import { PlayerControls } from './player-controls';
+import { PlayerControls, clock } from './player-controls';
+import { PlaybackProgress } from './playback-progress';
 import { SubtitleRenderer } from './subtitles/renderer';
 const root = document.getElementById('playback-root');
 root.innerHTML = `
 <section id="watch-panel" hidden>
   <div class="section-head"><div><div class="eyebrow">ĐANG XEM / THƯ VIỆN CỤC BỘ</div><h2 id="watch-title">Chọn video để bắt đầu</h2></div></div>
   <div class="watch-layout"><div class="watch-main">
-    <div id="video-stage"><video id="local-video" controls playsinline preload="metadata" disablepictureinpicture></video></div>
+    <div id="video-stage"><video id="local-video" controls playsinline preload="metadata" disablepictureinpicture></video>
+      <div id="resume-prompt" class="resume-prompt" role="group" aria-label="Tiếp tục xem" hidden>
+        <span>Bạn đang xem dở tập này</span>
+        <div><button id="resume-continue" type="button">Tiếp tục xem</button><button id="resume-restart" class="secondary" type="button">Xem từ đầu</button></div>
+      </div></div>
     <div class="player-toolbar"><button id="previous-episode" class="secondary">← Tập trước</button><button id="next-episode" class="secondary">Tập tiếp →</button></div>
     <p id="player-state" role="status" aria-live="polite"></p>
     <div class="subtitle-editor"><div class="section-head"><h2>Phụ đề</h2><label class="file-button">Thêm file sub<input id="add-subtitle" type="file" accept=".ass,.ssa,.srt,.vtt" hidden /></label></div>
@@ -31,7 +36,19 @@ const el = (id) => document.getElementById(id);
 const video = el('local-video');
 const report = (message) => text(el('player-state'), message);
 const subtitleReport = (message) => text(el('subtitle-editor-status'), message);
-const player = new VideoPlayer(video, report);
+const progress = new PlaybackProgress(video, {
+    onOffer: (position) => {
+        el('resume-continue').textContent = 'Tiếp tục từ ' + clock(position);
+        el('resume-prompt').hidden = false;
+    },
+    onDismiss: () => {
+        el('resume-prompt').hidden = true;
+    },
+    onError: report
+});
+el('resume-continue').onclick = () => progress.choose(true);
+el('resume-restart').onclick = () => progress.choose(false);
+const player = new VideoPlayer(video, report, progress);
 const renderer = new SubtitleRenderer(video);
 const controls = new PlayerControls(video, {
     onLayout: () => {

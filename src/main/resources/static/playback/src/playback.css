@@ -441,3 +441,30 @@ body.watching main {
     font-size: 12px;
     font-variant-numeric: tabular-nums;
 }
+
+.resume-prompt {
+    position: absolute;
+    z-index: 6;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: calc(100% - 24px);
+    padding: 18px;
+    border: 1px solid #ffffff40;
+    border-radius: 10px;
+    background: #15151fed;
+    color: #fff;
+    text-align: center;
+}
+.resume-prompt > div {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.resume-prompt button {
+    padding: 10px 14px;
+    font-size: 13px;
+}

@@ -8,7 +8,7 @@ const icons = {
     expand: '<svg viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6"/></svg>',
     shrink: '<svg viewBox="0 0 24 24"><path d="M3 9h6V3m6 0v6h6M9 21v-6H3m18 0h-6v6"/></svg>'
 };
-function clock(seconds) {
+export function clock(seconds) {
     if (!Number.isFinite(seconds)) {
         return '0:00';
     }

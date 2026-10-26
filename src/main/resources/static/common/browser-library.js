@@ -18,7 +18,7 @@ export class BrowserLibrary {
     describe(file) {
         const url = URL.createObjectURL(file);
         this.urls.push(url);
-        return { id: url, name: file.name, url };
+        return { id: url, name: file.name, size: file.size, url };
     }
     read(files) {
         const folders = new Map();

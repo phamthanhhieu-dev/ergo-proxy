@@ -2,13 +2,15 @@ import { fileUrl } from './api';
 
 /** Truyền nguyên file từ ổ đĩa; giải mã video thuộc về trình duyệt. */
 export class VideoPlayer {
-    constructor(video, report) {
+    constructor(video, report, progress) {
         this.video = video;
         this.report = report;
+        this.progress = progress;
         this.pictureVersion = 0;
     }
     stop() {
         this.pictureVersion++;
+        this.progress?.close();
         this.video.pause();
         this.video.removeAttribute('src');
         this.video.load();
@@ -47,7 +49,9 @@ export class VideoPlayer {
     }
     async open(entry) {
         this.stop();
-        this.video.src = entry.video.url || fileUrl(entry.video.id);
+        const source = entry.video.url || fileUrl(entry.video.id);
+        this.progress?.open(entry, source);
+        this.video.src = source;
         this.video.load();
         this.report(
             entry.video.url
