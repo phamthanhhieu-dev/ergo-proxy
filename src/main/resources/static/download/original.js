@@ -1,44 +1,14 @@
-// Attachment navigation lets Chrome own the download, Save As and progress.
-function nativeDownload(url, fields) {
-    const frame = document.createElement('iframe');
-    frame.hidden = true;
-    frame.name = 'download-' + crypto.randomUUID();
-    frame.title = 'Tải xuống';
-    frame.onload = () => {
-        try {
-            const text = frame.contentDocument?.body?.textContent;
-            if (text?.trim().startsWith('{')) {
-                const error = JSON.parse(text);
-                if (error.message) report(Error(error.message));
-            }
-        } catch {
-        }
-    };
-    document.body.append(frame);
-    if (fields) {
-        const form = document.createElement('form');
-        form.hidden = true;
-        form.method = 'POST';
-        form.action = url;
-        form.target = frame.name;
-        for (const [key, value] of Object.entries(fields)) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.append(input);
-        }
-        document.body.append(form);
-        form.submit();
-        form.remove();
-    } else frame.src = url;
-}
+import { $, API_ROUTES, api, sourceUrl, report } from '../common/anime-api.js';
+import { nativeDownload } from '../common/native-download.js';
+import { downloadState, selectedEpisodes, validateOriginalPage } from './state.js';
 
 let originalBusy = false;
 $('download').onclick = async () => {
-    if (originalBusy) return;
-    const episodes = [...$('episodes').querySelectorAll('input:checked')].map((box) => Number(box.value));
-    const anime = selectedAnime,
+    if (originalBusy) {
+        return;
+    }
+    const episodes = selectedEpisodes();
+    const anime = downloadState.anime,
         server = $('original-server').value,
         audio = $('audio').value,
         pageUrl = $('original-page').value.trim();
@@ -46,13 +16,14 @@ $('download').onclick = async () => {
         report(Error('Chọn ít nhất một tập.'));
         return;
     }
-    if (pageUrl && (episodes.length !== 1 || !/^https:\/\/flixcloud\.cc\/d\/[\w-]+\/?$/.test(pageUrl))) {
-        report(Error('Link /d/ chỉ dùng cho một tập đã chọn.'));
+    try {
+        validateOriginalPage(pageUrl, episodes);
+    } catch (error) {
+        report(error);
         return;
     }
-    const source = selectedAnimeSource;
+    const source = downloadState.source;
     originalBusy = true;
-    $('anime-source').disabled = true;
     $('download').disabled = true;
     try {
         for (let index = 0; index < episodes.length; index++) {
@@ -64,8 +35,14 @@ $('download').onclick = async () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ slug: anime.anime_id, episode, server, audio, pageUrl })
             });
+            const deadline = Date.now() + 10 * 60 * 1000;
             while (ticket.state !== 'READY') {
-                if (ticket.state === 'FAILED') throw Error(ticket.message);
+                if (Date.now() > deadline) {
+                    throw new Error('Nguồn tải chưa sẵn sàng sau 10 phút. Hãy thử lại.');
+                }
+                if (ticket.state === 'FAILED') {
+                    throw Error(ticket.message);
+                }
                 await new Promise((resolve) => setTimeout(resolve, 1000));
                 ticket = await api(sourceUrl(API_ROUTES.original + '/' + ticket.id, source));
             }
@@ -79,7 +56,6 @@ $('download').onclick = async () => {
         report(error);
     } finally {
         originalBusy = false;
-        $('anime-source').disabled = false;
         $('download').disabled = false;
     }
 };

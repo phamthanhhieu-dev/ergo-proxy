@@ -85,10 +85,16 @@ export class BrowserLibrary {
                 // Release old URLs only after the player switches to the new library.
                 const previous = this.urls;
                 this.urls = [];
-                const library = this.read(files);
-                onLibrary(library);
-                for (const url of previous) {
-                    URL.revokeObjectURL(url);
+                try {
+                    const library = this.read(files);
+                    onLibrary(library);
+                    for (const url of previous) {
+                        URL.revokeObjectURL(url);
+                    }
+                } catch (error) {
+                    this.dispose();
+                    this.urls = previous;
+                    throw error;
                 }
             } catch (error) {
                 onMessage(error.message);

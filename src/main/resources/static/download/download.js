@@ -1,35 +1,34 @@
-async function choose(anime, source = currentSource) {
-    sessionStorage.setItem('ergo.anime', JSON.stringify({ anime, source }));
-    if (document.body.dataset.page !== 'download') {
-        window.ErgoNavigation.go('download');
-        return;
-    }
+import '../common/navigation.js';
+import { $, API_ROUTES, api, sourceUrl, title, element, report } from '../common/anime-api.js';
+import { localStore, sessionStore } from '../common/storage.js';
+import { downloadState } from './state.js';
+import { resetSubtitles } from './subtitles.js';
+import './original.js';
+let episodeVersion = 0;
+
+async function choose(anime, source = localStore.get('ergo-proxy.anime-source', 'reanime')) {
+    sessionStore.write('ergo.anime', { anime, source });
     const version = ++episodeVersion;
     $('selection').hidden = true;
     $('message').textContent = 'Đang lấy danh sách tập…';
     $('subtitle-panel').hidden = true;
-    subtitleVersion++;
     try {
         const episodes = await api(
             sourceUrl(API_ROUTES.anime + '/anime/' + encodeURIComponent(anime.anime_id) + '/episodes', source)
         );
-        if (version !== episodeVersion) return;
-        selectedAnime = anime;
-        selectedAnimeSource = source;
-        available = episodes.filter((ep) => ep.playable !== false);
+        if (version !== episodeVersion) {
+            return;
+        }
+        downloadState.anime = anime;
+        downloadState.source = source;
+        downloadState.episodes = episodes.filter((ep) => ep.playable !== false);
         $('all').checked = false;
         $('original-page').value = '';
         $('subtitle-panel').hidden = false;
-        $('subtitle-results').replaceChildren();
-        $('subtitle-status').textContent = '';
-        $('subtitle-save-all').hidden = true;
-        $('subtitle-imdb').value = '';
-        $('subtitle-season').value = 1;
-        subtitleVersion++;
-        subtitleSelections.clear();
+        resetSubtitles();
         $('anime-title').textContent = title(anime);
         $('episodes').replaceChildren();
-        for (const ep of available) {
+        for (const ep of downloadState.episodes) {
             const label = element('label', null, 'episode'),
                 box = element('input');
             box.type = 'checkbox';
@@ -40,21 +39,26 @@ async function choose(anime, source = currentSource) {
             label.append(box, document.createTextNode(' Tập ' + ep.episode_number), element('small', ep.title || ''));
             $('episodes').append(label);
         }
-        const checked = JSON.parse(sessionStorage.getItem('ergo.episodes') || '[]');
+        const checked = sessionStore.read('ergo.episodes', []);
         for (const box of $('episodes').querySelectorAll('input')) {
-            box.checked = checked.includes(box.value);
+            box.checked = Array.isArray(checked) && checked.includes(box.value);
         }
+        $('all').checked =
+            downloadState.episodes.length > 0 &&
+            [...$('episodes').querySelectorAll('input')].every((box) => box.checked);
         $('selection').hidden = false;
-        $('download').disabled = !available.length;
+        $('download').disabled = !downloadState.episodes.length;
         window.ErgoNavigation.go('download');
 
         window.scrollTo({ top: 0, behavior: 'instant' });
         $('anime-title').focus({ preventScroll: true });
-        $('message').textContent = available.length
-            ? `${available.length} tập có thể tải`
+        $('message').textContent = downloadState.episodes.length
+            ? `${downloadState.episodes.length} tập có thể tải`
             : 'Anime chưa có tập có thể tải.';
     } catch (error) {
-        if (version === episodeVersion) report(error);
+        if (version === episodeVersion) {
+            report(error);
+        }
     }
 }
 
@@ -64,8 +68,8 @@ $('all').onchange = () =>
         .forEach((box) => (box.checked = $('all').checked));
 
 window.addEventListener('DOMContentLoaded', () => {
-    const saved = JSON.parse(sessionStorage.getItem('ergo.anime') || 'null');
-    if (saved) {
+    const saved = sessionStore.read('ergo.anime');
+    if (saved?.anime?.anime_id) {
         void choose(saved.anime, saved.source);
     } else {
         window.ErgoNavigation.reset();
@@ -73,5 +77,5 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 window.addEventListener('pagehide', () => {
     const checked = [...$('episodes').querySelectorAll('input:checked')].map((input) => input.value);
-    sessionStorage.setItem('ergo.episodes', JSON.stringify(checked));
+    sessionStore.write('ergo.episodes', checked);
 });

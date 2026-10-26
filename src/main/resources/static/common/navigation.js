@@ -1,3 +1,5 @@
+import { sessionStore } from './storage.js';
+
 (() => {
     const pages = {
         main: '/search/index.html',
@@ -22,7 +24,7 @@
             if (view === current) {
                 return;
             }
-            sessionStorage.setItem('ergo.previous', location.pathname);
+            sessionStore.set('ergo.previous', location.pathname);
             location.assign((pages[view] || '/') + query);
         },
         back() {
@@ -35,7 +37,7 @@
         }
     };
     if (!history.state?.ergoPage) {
-        const previous = sessionStorage.getItem('ergo.previous');
+        const previous = sessionStore.get('ergo.previous');
         history.replaceState(
             {
                 ergoPage: current,
@@ -43,6 +45,6 @@
             },
             ''
         );
-        sessionStorage.removeItem('ergo.previous');
+        sessionStore.remove('ergo.previous');
     }
 })();

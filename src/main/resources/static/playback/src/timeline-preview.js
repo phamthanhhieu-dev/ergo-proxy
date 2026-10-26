@@ -119,8 +119,10 @@ export class TimelinePreview {
         this.active = false;
         clearTimeout(this.timer);
         this.element.hidden = true;
-        this.decoder.removeAttribute('src');
-        this.decoder.load();
+        if (this.decoder.hasAttribute('src')) {
+            this.decoder.removeAttribute('src');
+            this.decoder.load();
+        }
     }
     reset() {
         this.hide();

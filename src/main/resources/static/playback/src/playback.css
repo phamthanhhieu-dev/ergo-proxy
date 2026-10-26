@@ -1,12 +1,3 @@
-body.watching #search-screen,
-body.watching .source-picker,
-body.watching #back-to-search,
-body.watching #message,
-body.watching #selection,
-body.watching #subtitle-panel,
-body.watching #jobs {
-    display: none !important;
-}
 body.watching main {
     max-width: 1500px;
     padding-top: 24px;
@@ -475,4 +466,44 @@ body.watching main {
 .resume-prompt button {
     padding: 10px 14px;
     font-size: 13px;
+}
+
+.episode-watch-status {
+    display: block;
+    min-height: 1.4em;
+    font-size: 11px;
+    color: #959bb0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.library-episode[data-watched='true'] .episode-watch-status {
+    color: #85dab1;
+}
+.library-episode[data-in-progress='true'] .episode-watch-status {
+    color: #d6c4ff;
+}
+.episode-watch-progress {
+    display: block;
+    width: 100%;
+    height: 4px;
+    accent-color: #b9a9ff;
+    border: 0;
+}
+
+.subtitle-delay-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.subtitle-delay-heading .remember-delay {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+.remember-delay input[type='checkbox'] {
+    margin: 0;
 }
