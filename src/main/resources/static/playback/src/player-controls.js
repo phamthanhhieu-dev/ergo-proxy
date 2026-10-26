@@ -35,6 +35,7 @@ export class PlayerControls {
         this.savedViewport = null;
         this.viewportVersion = 0;
         this.scrollFrame = null;
+        this.stopScrollRestore = null;
         this.savedOverflow = '';
         this.orientationLocked = false;
         const controls = document.createElement('div');
@@ -80,6 +81,13 @@ export class PlayerControls {
             video.playbackRate = Number(event.target.value);
             video.defaultPlaybackRate = video.playbackRate;
         };
+        this.fullscreen.addEventListener('pointerdown', (event) => {
+            if (!this.expanded) {
+                this.saveViewport(true);
+                // Capture before the button's default focus can scroll the document.
+                event.preventDefault();
+            }
+        });
         this.fullscreen.onclick = () => this.toggleFullscreen();
         for (const button of controls.querySelectorAll('[data-seek]')) {
             button.onclick = () => this.jump(video.currentTime + Number(button.dataset.seek));
@@ -274,33 +282,70 @@ export class PlayerControls {
         document.body.style.overflow = this.savedOverflow;
         this.fullscreenChanged();
     }
-    saveViewport() {
-        if (this.savedViewport) {
+    saveViewport(force = false) {
+        if (this.savedViewport && !force) {
             return;
         }
+        this.stopScrollRestore?.();
         this.viewportVersion++;
         cancelAnimationFrame(this.scrollFrame);
-        this.savedViewport = { x: window.scrollX, y: window.scrollY, focus: document.activeElement };
+        const containers = [];
+        // Include nested scrolling areas such as the episode list, not only window.scrollY.
+        for (const node of document.querySelectorAll('body *')) {
+            if (node.scrollTop || node.scrollLeft) {
+                containers.push({ node, x: node.scrollLeft, y: node.scrollTop });
+            }
+        }
+        this.savedViewport = { x: window.scrollX, y: window.scrollY, focus: document.activeElement, containers };
     }
     restoreViewport() {
         const saved = this.savedViewport;
-        if (!saved || this.expanded) {
+        if (!saved || this.expanded || this.stopScrollRestore) {
             return;
         }
-        this.savedViewport = null;
         const version = this.viewportVersion;
+        const deadline = performance.now() + 1000;
+        const events = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+        const stop = () => {
+            cancelAnimationFrame(this.scrollFrame);
+            for (const event of events) {
+                window.removeEventListener(event, stop, true);
+            }
+            if (this.savedViewport === saved) {
+                this.savedViewport = null;
+            }
+            if (this.stopScrollRestore === stop) {
+                this.stopScrollRestore = null;
+            }
+        };
+        this.stopScrollRestore = stop;
+        for (const event of events) {
+            window.addEventListener(event, stop, { capture: true, passive: true });
+        }
+        if (saved.focus?.isConnected) {
+            saved.focus.focus({ preventScroll: true });
+        }
         const restore = () => {
             if (version !== this.viewportVersion || this.expanded) {
+                stop();
                 return;
             }
-            if (saved.focus?.isConnected) {
-                saved.focus.focus({ preventScroll: true });
+            for (const item of saved.containers) {
+                if (item.node.isConnected && (item.node.scrollTop !== item.y || item.node.scrollLeft !== item.x)) {
+                    item.node.scrollTo({ left: item.x, top: item.y, behavior: 'instant' });
+                }
             }
-            window.scrollTo({ left: saved.x, top: saved.y, behavior: 'instant' });
+            if (Math.abs(window.scrollY - saved.y) > 1 || Math.abs(window.scrollX - saved.x) > 1) {
+                window.scrollTo({ left: saved.x, top: saved.y, behavior: 'instant' });
+            }
+            // Cover delayed browser focus/orientation changes. User input cancels immediately.
+            if (performance.now() < deadline) {
+                this.scrollFrame = requestAnimationFrame(restore);
+            } else {
+                stop();
+            }
         };
         restore();
-        // Fullscreen focus restoration can run after the layout/compositor repaint.
-        this.scrollFrame = requestAnimationFrame(restore);
     }
     fullscreenChanged() {
         const wasExpanded = this.expanded;
@@ -356,16 +401,15 @@ export class PlayerControls {
         this.restorePending = this.restorePending || restorePicture;
         cancelAnimationFrame(this.layoutFrame);
         this.layoutFrame = requestAnimationFrame(() => {
-            this.layoutFrame = requestAnimationFrame(async () => {
+            this.layoutFrame = requestAnimationFrame(() => {
                 const restore = this.restorePending;
                 this.restorePending = false;
                 if (restore && !this.expanded) {
-                    await this.onRestorePicture();
+                    // A buffered seek/play can take seconds; scrolling must not wait for it.
+                    this.restoreViewport();
+                    void this.onRestorePicture().catch((error) => this.onError(error.message));
                 }
                 this.onLayout();
-                if (restore && !this.expanded) {
-                    this.restoreViewport();
-                }
             });
         });
     }

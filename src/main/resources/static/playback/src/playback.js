@@ -10,11 +10,11 @@ root.innerHTML = `
 <section id="watch-panel" hidden>
   <div class="section-head"><div><div class="eyebrow">ĐANG XEM / THƯ VIỆN CỤC BỘ</div><h2 id="watch-title">Chọn video để bắt đầu</h2></div></div>
   <div class="watch-layout"><div class="watch-main">
-    <div id="video-stage"><video id="local-video" controls playsinline preload="metadata" disablepictureinpicture></video>
+    <div class="video-frame"><div id="video-stage"><video id="local-video" controls playsinline preload="metadata" disablepictureinpicture></video>
       <div id="resume-prompt" class="resume-prompt" role="group" aria-label="Tiếp tục xem" hidden>
         <span>Bạn đang xem dở tập này</span>
         <div><button id="resume-continue" type="button">Tiếp tục xem</button><button id="resume-restart" class="secondary" type="button">Xem từ đầu</button></div>
-      </div></div>
+      </div></div></div>
     <div class="player-toolbar"><button id="previous-episode" class="secondary">← Tập trước</button><button id="next-episode" class="secondary">Tập tiếp →</button></div>
     <p id="player-state" role="status" aria-live="polite"></p>
     <div class="subtitle-editor"><div class="section-head"><h2>Phụ đề</h2><label class="file-button">Thêm file sub<input id="add-subtitle" type="file" accept=".ass,.ssa,.srt,.vtt" hidden /></label></div>
