@@ -37,7 +37,8 @@ const controls = new PlayerControls(video, {
     onLayout: () => {
         void renderer.refreshLayout().catch((error) => subtitleReport(error.message));
     },
-    onError: report
+    onError: report,
+    onRestorePicture: () => player.restorePicture()
 });
 const browserLibrary = new BrowserLibrary();
 let entries = [];

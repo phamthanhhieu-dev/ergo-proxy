@@ -57,7 +57,8 @@ body.watching main {
     background: #000;
     aspect-ratio: 16/9;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 0;
+    isolation: isolate;
 }
 #video-stage video {
     position: absolute;
@@ -66,6 +67,9 @@ body.watching main {
     height: 100%;
     display: block;
     object-fit: contain;
+    z-index: 0;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 #video-stage:fullscreen,
 #video-stage:-webkit-full-screen,
@@ -407,4 +411,33 @@ body.watching main {
     .watch-layout {
         grid-template-columns: minmax(0, 1fr) 300px;
     }
+}
+
+.media-timeline {
+    position: relative;
+}
+.timeline-preview {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: 192px;
+    max-width: 100%;
+    overflow: hidden;
+    border: 1px solid #ffffff55;
+    border-radius: 7px;
+    background: #15151f;
+    box-shadow: 0 4px 18px #0008;
+    pointer-events: none;
+    text-align: center;
+}
+#video-stage .timeline-preview canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.timeline-preview span {
+    display: block;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
 }

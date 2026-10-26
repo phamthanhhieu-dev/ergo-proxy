@@ -5,11 +5,45 @@ export class VideoPlayer {
     constructor(video, report) {
         this.video = video;
         this.report = report;
+        this.pictureVersion = 0;
     }
     stop() {
+        this.pictureVersion++;
         this.video.pause();
         this.video.removeAttribute('src');
         this.video.load();
+    }
+    async restorePicture() {
+        const video = this.video;
+        if (!video.currentSrc || video.readyState < 2) {
+            return;
+        }
+        const version = ++this.pictureVersion;
+        const source = video.currentSrc;
+        const playing = !video.paused;
+        const time = video.currentTime;
+        const display = video.style.display;
+        // Tear down the stale fullscreen compositor layer without replacing/reloading the source.
+        video.pause();
+        video.style.display = 'none';
+        void video.offsetHeight;
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        video.style.display = display;
+        void video.offsetHeight;
+        if (version !== this.pictureVersion || source !== video.currentSrc) {
+            return;
+        }
+        try {
+            // A same-position seek also redraws the decoded frame while paused.
+            video.currentTime = time;
+            if (playing) {
+                await video.play();
+            }
+        } catch (error) {
+            if (version === this.pictureVersion && error.name !== 'AbortError') {
+                this.report(error.message);
+            }
+        }
     }
     async open(entry) {
         this.stop();

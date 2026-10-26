@@ -1,3 +1,5 @@
+import { TimelinePreview } from './timeline-preview';
+
 const icons = {
     play: '<svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none"/></svg>',
     pause: '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>',
@@ -20,21 +22,25 @@ function clock(seconds) {
     );
 }
 export class PlayerControls {
-    constructor(video, { onLayout, onError }) {
+    constructor(video, { onLayout, onError, onRestorePicture }) {
         this.video = video;
         this.stage = video.parentElement;
         this.onLayout = onLayout;
         this.onError = onError;
+        this.onRestorePicture = onRestorePicture;
+        this.expanded = false;
         this.scrubbing = false;
         this.hideTimer = null;
         this.layoutFrame = null;
-        this.savedScroll = 0;
+        this.savedViewport = null;
+        this.viewportVersion = 0;
+        this.scrollFrame = null;
         this.savedOverflow = '';
         this.orientationLocked = false;
         const controls = document.createElement('div');
         controls.className = 'media-controls';
         controls.innerHTML = `
-          <input class="media-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Vị trí phát" disabled />
+          <div class="media-timeline"><input class="media-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Vị trí phát" disabled /></div>
           <div class="media-buttons">
             <button type="button" class="media-play" aria-label="Phát" title="Phát / Tạm dừng (Space)">${icons.play}</button>
             <button type="button" class="media-mute" aria-label="Tắt tiếng" title="Bật / Tắt tiếng (M)">${icons.sound}</button>
@@ -58,6 +64,7 @@ export class PlayerControls {
         this.play = controls.querySelector('.media-play');
         this.mute = controls.querySelector('.media-mute');
         this.seek = controls.querySelector('.media-seek');
+        this.preview = new TimelinePreview(video, this.seek, clock);
         this.volume = controls.querySelector('.media-volume');
         this.time = controls.querySelector('.media-time');
         this.fullscreen = controls.querySelector('.media-fullscreen');
@@ -126,6 +133,8 @@ export class PlayerControls {
         });
         window.addEventListener('pagehide', () => this.unlockOrientation());
         window.addEventListener('resize', () => this.refreshLayout());
+        this.resizeObserver = new ResizeObserver(() => this.refreshLayout());
+        this.resizeObserver.observe(this.stage);
         video.controls = false;
         this.update();
         this.updateVolume();
@@ -177,7 +186,7 @@ export class PlayerControls {
         clearTimeout(this.hideTimer);
         if (!this.video.paused) {
             this.hideTimer = setTimeout(() => {
-                if (!this.scrubbing && !this.controls.querySelector(':focus-visible')) {
+                if (!this.scrubbing && !this.preview.active && !this.controls.querySelector(':focus-visible')) {
                     this.stage.dataset.controlsHidden = 'true';
                 }
             }, 3000);
@@ -233,6 +242,7 @@ export class PlayerControls {
                 }
                 return;
             }
+            this.saveViewport();
             const enter = this.stage.requestFullscreen || this.stage.webkitRequestFullscreen;
             if (enter) {
                 try {
@@ -249,7 +259,7 @@ export class PlayerControls {
         }
     }
     enterExpanded() {
-        this.savedScroll = window.scrollY;
+        this.saveViewport();
         this.savedOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         this.stage.classList.add('is-expanded');
@@ -262,21 +272,56 @@ export class PlayerControls {
         }
         this.stage.classList.remove('is-expanded');
         document.body.style.overflow = this.savedOverflow;
-        window.scrollTo({ top: this.savedScroll });
         this.fullscreenChanged();
     }
+    saveViewport() {
+        if (this.savedViewport) {
+            return;
+        }
+        this.viewportVersion++;
+        cancelAnimationFrame(this.scrollFrame);
+        this.savedViewport = { x: window.scrollX, y: window.scrollY, focus: document.activeElement };
+    }
+    restoreViewport() {
+        const saved = this.savedViewport;
+        if (!saved || this.expanded) {
+            return;
+        }
+        this.savedViewport = null;
+        const version = this.viewportVersion;
+        const restore = () => {
+            if (version !== this.viewportVersion || this.expanded) {
+                return;
+            }
+            if (saved.focus?.isConnected) {
+                saved.focus.focus({ preventScroll: true });
+            }
+            window.scrollTo({ left: saved.x, top: saved.y, behavior: 'instant' });
+        };
+        restore();
+        // Fullscreen focus restoration can run after the layout/compositor repaint.
+        this.scrollFrame = requestAnimationFrame(restore);
+    }
     fullscreenChanged() {
+        const wasExpanded = this.expanded;
         const expanded =
             (document.fullscreenElement || document.webkitFullscreenElement) === this.stage ||
             this.stage.classList.contains('is-expanded');
+        this.expanded = expanded;
+        this.preview.hide();
         if (!expanded) {
             this.unlockOrientation();
+            if (wasExpanded) {
+                this.refreshLayout(true);
+            }
         }
         this.fullscreen.innerHTML = expanded ? icons.shrink : icons.expand;
         this.fullscreen.setAttribute('aria-label', expanded ? 'Thoát toàn màn hình' : 'Toàn màn hình');
         this.fullscreen.title = expanded ? 'Thoát toàn màn hình (Esc / F)' : 'Toàn màn hình (F)';
         this.show();
-        this.refreshLayout();
+        if (expanded || !wasExpanded) {
+            this.refreshLayout();
+        }
     }
     async lockLandscape() {
         const touchDevice = navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
@@ -307,13 +352,25 @@ export class PlayerControls {
         }
         this.orientationLocked = false;
     }
-    refreshLayout() {
+    refreshLayout(restorePicture = false) {
+        this.restorePending = this.restorePending || restorePicture;
         cancelAnimationFrame(this.layoutFrame);
         this.layoutFrame = requestAnimationFrame(() => {
-            this.layoutFrame = requestAnimationFrame(() => this.onLayout());
+            this.layoutFrame = requestAnimationFrame(async () => {
+                const restore = this.restorePending;
+                this.restorePending = false;
+                if (restore && !this.expanded) {
+                    await this.onRestorePicture();
+                }
+                this.onLayout();
+                if (restore && !this.expanded) {
+                    this.restoreViewport();
+                }
+            });
         });
     }
     reset() {
+        this.preview.reset();
         this.unlockOrientation();
         this.exitExpanded();
         this.scrubbing = false;
