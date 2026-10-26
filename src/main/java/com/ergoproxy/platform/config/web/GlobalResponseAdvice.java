@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.config.web;
 
-import com.ergoproxy.platform.AnimeApplication;
+import com.ergoproxy.platform.ErgoProxyApplication;
 import com.ergoproxy.platform.dto.GlobalApiResponse;
 import com.ergoproxy.platform.exception.LogicException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
-@RestControllerAdvice(basePackageClasses = AnimeApplication.class)
+@RestControllerAdvice(basePackageClasses = ErgoProxyApplication.class)
 @RequiredArgsConstructor
 public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
 
