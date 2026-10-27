@@ -1,0 +1,15 @@
+**/.git
+**/.env
+**/.env.*
+**/node_modules
+**/.venv
+**/target
+**/.idea
+**/.tools
+**/__pycache__
+**/*.log
+**/*.pyc
+data
+docs
+.github
+src/main/resources/static/playback/dist

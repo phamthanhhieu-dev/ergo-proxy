@@ -1,3 +1,5 @@
+import { TimelinePreview } from './timeline-preview';
+
 const icons = {
     play: '<svg viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z" fill="currentColor" stroke="none"/></svg>',
     pause: '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>',
@@ -6,7 +8,7 @@ const icons = {
     expand: '<svg viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6"/></svg>',
     shrink: '<svg viewBox="0 0 24 24"><path d="M3 9h6V3m6 0v6h6M9 21v-6H3m18 0h-6v6"/></svg>'
 };
-function clock(seconds) {
+export function clock(seconds) {
     if (!Number.isFinite(seconds)) {
         return '0:00';
     }
@@ -20,21 +22,26 @@ function clock(seconds) {
     );
 }
 export class PlayerControls {
-    constructor(video, { onLayout, onError }) {
+    constructor(video, { onLayout, onError, onRestorePicture }) {
         this.video = video;
         this.stage = video.parentElement;
         this.onLayout = onLayout;
         this.onError = onError;
+        this.onRestorePicture = onRestorePicture;
+        this.expanded = false;
         this.scrubbing = false;
         this.hideTimer = null;
         this.layoutFrame = null;
-        this.savedScroll = 0;
+        this.savedViewport = null;
+        this.viewportVersion = 0;
+        this.scrollFrame = null;
+        this.stopScrollRestore = null;
         this.savedOverflow = '';
         this.orientationLocked = false;
         const controls = document.createElement('div');
         controls.className = 'media-controls';
         controls.innerHTML = `
-          <input class="media-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Vị trí phát" disabled />
+          <div class="media-timeline"><input class="media-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Vị trí phát" disabled /></div>
           <div class="media-buttons">
             <button type="button" class="media-play" aria-label="Phát" title="Phát / Tạm dừng (Space)">${icons.play}</button>
             <button type="button" class="media-mute" aria-label="Tắt tiếng" title="Bật / Tắt tiếng (M)">${icons.sound}</button>
@@ -58,6 +65,7 @@ export class PlayerControls {
         this.play = controls.querySelector('.media-play');
         this.mute = controls.querySelector('.media-mute');
         this.seek = controls.querySelector('.media-seek');
+        this.preview = new TimelinePreview(video, this.seek, clock);
         this.volume = controls.querySelector('.media-volume');
         this.time = controls.querySelector('.media-time');
         this.fullscreen = controls.querySelector('.media-fullscreen');
@@ -73,6 +81,13 @@ export class PlayerControls {
             video.playbackRate = Number(event.target.value);
             video.defaultPlaybackRate = video.playbackRate;
         };
+        this.fullscreen.addEventListener('pointerdown', (event) => {
+            if (!this.expanded) {
+                this.saveViewport(true);
+                // Capture before the button's default focus can scroll the document.
+                event.preventDefault();
+            }
+        });
         this.fullscreen.onclick = () => this.toggleFullscreen();
         for (const button of controls.querySelectorAll('[data-seek]')) {
             button.onclick = () => this.jump(video.currentTime + Number(button.dataset.seek));
@@ -126,6 +141,8 @@ export class PlayerControls {
         });
         window.addEventListener('pagehide', () => this.unlockOrientation());
         window.addEventListener('resize', () => this.refreshLayout());
+        this.resizeObserver = new ResizeObserver(() => this.refreshLayout());
+        this.resizeObserver.observe(this.stage);
         video.controls = false;
         this.update();
         this.updateVolume();
@@ -177,7 +194,7 @@ export class PlayerControls {
         clearTimeout(this.hideTimer);
         if (!this.video.paused) {
             this.hideTimer = setTimeout(() => {
-                if (!this.scrubbing && !this.controls.querySelector(':focus-visible')) {
+                if (!this.scrubbing && !this.preview.active && !this.controls.querySelector(':focus-visible')) {
                     this.stage.dataset.controlsHidden = 'true';
                 }
             }, 3000);
@@ -233,6 +250,7 @@ export class PlayerControls {
                 }
                 return;
             }
+            this.saveViewport();
             const enter = this.stage.requestFullscreen || this.stage.webkitRequestFullscreen;
             if (enter) {
                 try {
@@ -249,7 +267,7 @@ export class PlayerControls {
         }
     }
     enterExpanded() {
-        this.savedScroll = window.scrollY;
+        this.saveViewport();
         this.savedOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         this.stage.classList.add('is-expanded');
@@ -262,21 +280,93 @@ export class PlayerControls {
         }
         this.stage.classList.remove('is-expanded');
         document.body.style.overflow = this.savedOverflow;
-        window.scrollTo({ top: this.savedScroll });
         this.fullscreenChanged();
     }
+    saveViewport(force = false) {
+        if (this.savedViewport && !force) {
+            return;
+        }
+        this.stopScrollRestore?.();
+        this.viewportVersion++;
+        cancelAnimationFrame(this.scrollFrame);
+        const containers = [];
+        // Include nested scrolling areas such as the episode list, not only window.scrollY.
+        for (const node of document.querySelectorAll('body *')) {
+            if (node.scrollTop || node.scrollLeft) {
+                containers.push({ node, x: node.scrollLeft, y: node.scrollTop });
+            }
+        }
+        this.savedViewport = { x: window.scrollX, y: window.scrollY, focus: document.activeElement, containers };
+    }
+    restoreViewport() {
+        const saved = this.savedViewport;
+        if (!saved || this.expanded || this.stopScrollRestore) {
+            return;
+        }
+        const version = this.viewportVersion;
+        const deadline = performance.now() + 1000;
+        const events = ['wheel', 'touchstart', 'pointerdown', 'keydown'];
+        const stop = () => {
+            cancelAnimationFrame(this.scrollFrame);
+            for (const event of events) {
+                window.removeEventListener(event, stop, true);
+            }
+            if (this.savedViewport === saved) {
+                this.savedViewport = null;
+            }
+            if (this.stopScrollRestore === stop) {
+                this.stopScrollRestore = null;
+            }
+        };
+        this.stopScrollRestore = stop;
+        for (const event of events) {
+            window.addEventListener(event, stop, { capture: true, passive: true });
+        }
+        if (saved.focus?.isConnected) {
+            saved.focus.focus({ preventScroll: true });
+        }
+        const restore = () => {
+            if (version !== this.viewportVersion || this.expanded) {
+                stop();
+                return;
+            }
+            for (const item of saved.containers) {
+                if (item.node.isConnected && (item.node.scrollTop !== item.y || item.node.scrollLeft !== item.x)) {
+                    item.node.scrollTo({ left: item.x, top: item.y, behavior: 'instant' });
+                }
+            }
+            if (Math.abs(window.scrollY - saved.y) > 1 || Math.abs(window.scrollX - saved.x) > 1) {
+                window.scrollTo({ left: saved.x, top: saved.y, behavior: 'instant' });
+            }
+            // Cover delayed browser focus/orientation changes. User input cancels immediately.
+            if (performance.now() < deadline) {
+                this.scrollFrame = requestAnimationFrame(restore);
+            } else {
+                stop();
+            }
+        };
+        restore();
+    }
     fullscreenChanged() {
+        const wasExpanded = this.expanded;
         const expanded =
             (document.fullscreenElement || document.webkitFullscreenElement) === this.stage ||
             this.stage.classList.contains('is-expanded');
+        this.expanded = expanded;
+        this.preview.hide();
         if (!expanded) {
             this.unlockOrientation();
+            if (wasExpanded) {
+                this.refreshLayout(true);
+            }
         }
         this.fullscreen.innerHTML = expanded ? icons.shrink : icons.expand;
         this.fullscreen.setAttribute('aria-label', expanded ? 'Thoát toàn màn hình' : 'Toàn màn hình');
         this.fullscreen.title = expanded ? 'Thoát toàn màn hình (Esc / F)' : 'Toàn màn hình (F)';
         this.show();
-        this.refreshLayout();
+        if (expanded || !wasExpanded) {
+            this.refreshLayout();
+        }
     }
     async lockLandscape() {
         const touchDevice = navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
@@ -307,13 +397,24 @@ export class PlayerControls {
         }
         this.orientationLocked = false;
     }
-    refreshLayout() {
+    refreshLayout(restorePicture = false) {
+        this.restorePending = this.restorePending || restorePicture;
         cancelAnimationFrame(this.layoutFrame);
         this.layoutFrame = requestAnimationFrame(() => {
-            this.layoutFrame = requestAnimationFrame(() => this.onLayout());
+            this.layoutFrame = requestAnimationFrame(() => {
+                const restore = this.restorePending;
+                this.restorePending = false;
+                if (restore && !this.expanded) {
+                    // A buffered seek/play can take seconds; scrolling must not wait for it.
+                    this.restoreViewport();
+                    void this.onRestorePicture().catch((error) => this.onError(error.message));
+                }
+                this.onLayout();
+            });
         });
     }
     reset() {
+        this.preview.reset();
         this.unlockOrientation();
         this.exitExpanded();
         this.scrubbing = false;

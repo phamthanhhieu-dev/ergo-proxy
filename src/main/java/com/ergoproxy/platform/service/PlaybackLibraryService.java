@@ -6,6 +6,5 @@ import java.util.UUID;
 
 public interface PlaybackLibraryService {
     LibrarySnapshotDTO library();
-    LibrarySnapshotDTO pick(String type);
     LibraryFile find(UUID id);
 }

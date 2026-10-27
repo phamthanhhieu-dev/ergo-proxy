@@ -23,12 +23,6 @@ public class PlaybackController {
         return response;
     }
 
-    @PostMapping("/selection")
-    public LibrarySnapshotDTO select(@RequestParam(defaultValue = Const.NativePicker.FILE) String type) {
-        LibrarySnapshotDTO response = libraryService.pick(type);
-        return response;
-    }
-
     @GetMapping("/files/{id}")
     public ResponseEntity<Resource> file(@PathVariable UUID id) {
         ResponseEntity<Resource> response = mediaService.file(id);

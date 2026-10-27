@@ -1,56 +1,90 @@
+import '../../common/navigation.js';
+import { localStore, sessionStore } from '../../common/storage.js';
 import './playback.css';
-import { request, fileUrl, text } from './api';
+import { BrowserLibrary } from '../../common/browser-library';
+import { request, text } from './api';
 import { VideoPlayer } from './player';
-import { PlayerControls } from './player-controls';
-import { SubtitleRenderer } from './subtitles/renderer';
+import { PlayerControls, clock } from './player-controls';
+import { PlaybackProgress } from './playback-progress';
+import { SubtitleEditor } from './subtitles/editor';
 const root = document.getElementById('playback-root');
 root.innerHTML = `
 <section id="watch-panel" hidden>
   <div class="section-head"><div><div class="eyebrow">ĐANG XEM / THƯ VIỆN CỤC BỘ</div><h2 id="watch-title">Chọn video để bắt đầu</h2></div></div>
   <div class="watch-layout"><div class="watch-main">
-    <div id="video-stage"><video id="local-video" controls playsinline preload="metadata" disablepictureinpicture></video></div>
+    <div class="video-frame"><div id="video-stage"><video id="local-video" controls playsinline preload="metadata" disablepictureinpicture></video>
+      <div id="resume-prompt" class="resume-prompt" role="group" aria-label="Tiếp tục xem" hidden>
+        <span>Bạn đang xem dở tập này</span>
+        <div><button id="resume-continue" type="button">Tiếp tục xem</button><button id="resume-restart" class="secondary" type="button">Xem từ đầu</button></div>
+      </div></div></div>
     <div class="player-toolbar"><button id="previous-episode" class="secondary">← Tập trước</button><button id="next-episode" class="secondary">Tập tiếp →</button></div>
     <p id="player-state" role="status" aria-live="polite"></p>
-    <div class="subtitle-editor"><div class="section-head"><h2>Phụ đề</h2><label class="file-button">Thêm file sub<input id="add-subtitle" type="file" accept=".ass,.ssa,.srt,.vtt" hidden /></label></div>
-      <label>Bản phụ đề <select id="local-subtitles"><option value="">Tắt phụ đề</option></select></label>
-      <div class="subtitle-settings">
-        <label><input id="keep-ass-style" type="checkbox" checked /> Giữ kiểu ASS/SSA gốc</label>
-        <label>Font chữ<input id="subtitle-font" value="Liberation Sans" maxlength="80" list="font-list" /><datalist id="font-list"><option value="Liberation Sans"></option><option value="Arial"></option><option value="Roboto"></option><option value="Noto Sans"></option></datalist></label>
-        <label>Cỡ chữ <output id="font-scale-value">100%</output><input id="font-scale" type="range" min="50" max="250" value="100" step="5" /></label>
-        <label>Độ trễ phụ đề (giây)<input id="subtitle-delay" type="number" min="-3600" max="3600" value="0" step="0.1" /></label>
-      </div>
-      <div class="playback-actions"><button id="sub-earlier" class="secondary">Sớm hơn 0,25s</button><button id="sub-later" class="secondary">Muộn hơn 0,25s</button><label class="file-button secondary">Thêm font TTF/OTF<input id="add-font" type="file" accept=".ttf,.otf,.woff,.woff2" multiple hidden /></label><button id="reset-subtitles" class="text">Khôi phục mặc định</button><button id="export-subtitles" class="secondary">Xuất bản ASS đã chỉnh</button></div>
-      <p class="hint">Độ trễ dương = sub xuất hiện muộn hơn; âm = sớm hơn. Thay đổi font/cỡ chữ sẽ bỏ chế độ giữ kiểu gốc. Font chưa có sẽ dùng font dự phòng; thêm file font để hiển thị đúng. Các chỉnh sửa chỉ áp dụng trên player; file sub gốc được giữ nguyên.</p>
-      <p id="subtitle-editor-status" role="status" aria-live="polite"></p>
-    </div>
+    <div id="subtitle-editor" class="subtitle-editor"></div>
   </div><aside class="episode-browser"><label>Bộ anime <select id="library-series"></select></label><div id="library-count" class="eyebrow"></div><div id="library-episodes"></div></aside></div>
   <p class="hint">Video được truyền nguyên file từ ổ đĩa qua mạng LAN. Phụ đề, font và độ trễ xử lý trên thiết bị đang xem. Khả năng phát video/âm thanh phụ thuộc codec trình duyệt hỗ trợ.</p>
 </section>`;
 const el = (id) => document.getElementById(id);
 const video = el('local-video');
 const report = (message) => text(el('player-state'), message);
-const subtitleReport = (message) => text(el('subtitle-editor-status'), message);
-const player = new VideoPlayer(video, report);
-const renderer = new SubtitleRenderer(video);
-const controls = new PlayerControls(video, {
-    onLayout: () => {
-        void renderer.refreshLayout().catch((error) => subtitleReport(error.message));
+const progress = new PlaybackProgress(video, {
+    onOffer: (position) => {
+        el('resume-continue').textContent = 'Tiếp tục từ ' + clock(position);
+        el('resume-prompt').hidden = false;
     },
-    onError: report
+    onDismiss: () => {
+        el('resume-prompt').hidden = true;
+    },
+    onError: report,
+    onChanged: () => updateEpisodeProgress()
 });
+el('resume-continue').onclick = () => progress.choose(true);
+el('resume-restart').onclick = () => progress.choose(false);
+const player = new VideoPlayer(video, report, progress);
+const editor = new SubtitleEditor(video, el('subtitle-editor'));
+new PlayerControls(video, {
+    onLayout: () => {
+        void editor.refreshLayout().catch((error) => editor.report(error.message));
+    },
+    onError: report,
+    onRestorePicture: () => player.restorePicture()
+});
+const browserLibrary = new BrowserLibrary();
+const episodeRows = new Map();
 let entries = [];
 let selected = null;
-let subtitleFiles = [];
 let generation = 0;
-let subGeneration = 0;
-let updateTimer;
 function showPlayer() {
     el('watch-panel').hidden = false;
     window.ErgoNavigation.go('watch');
 }
+function elementNode(tag, className) {
+    const node = document.createElement(tag);
+    node.className = className;
+    return node;
+}
+function updateEpisodeProgress() {
+    const history = progress.read();
+    for (const row of episodeRows.values()) {
+        const state = progress.status(row.entry, history);
+        row.button.dataset.watched = String(state.watched);
+        row.button.dataset.inProgress = String(state.inProgress);
+        if (state.inProgress) {
+            row.status.textContent = (state.watched ? '✓ Đã xem • Xem lại ' : 'Đang xem • ') + clock(state.position);
+        } else {
+            row.status.textContent = state.watched ? '✓ Đã xem' : 'Chưa xem';
+        }
+        row.status.title = row.status.textContent;
+        row.bar.value = state.inProgress
+            ? Math.min(100, (state.position / state.duration) * 100)
+            : state.watched
+              ? 100
+              : 0;
+    }
+}
 function refreshEpisodes() {
     const series = el('library-series').value;
     el('library-episodes').replaceChildren();
+    episodeRows.clear();
     const list = entries.filter((entry) => entry.series === series);
     text(el('library-count'), `${list.length} tập / video`);
     for (const entry of list) {
@@ -67,64 +101,67 @@ function refreshEpisodes() {
         name.textContent = entry.video.name;
         const sub = document.createElement('small');
         sub.textContent = `${entry.subtitles.length} phụ đề đi kèm`;
-        button.append(title, name, sub);
+        const status = elementNode('span', 'episode-watch-status');
+        const bar = document.createElement('progress');
+        bar.className = 'episode-watch-progress';
+        bar.max = 100;
+        bar.setAttribute('aria-label', 'Tiến độ xem ' + entry.episode);
+        button.append(title, name, sub, status, bar);
+        episodeRows.set(progress.identity(entry), { entry, button, status, bar });
         button.onclick = () => openVideo(entry);
         el('library-episodes').append(button);
     }
+    updateEpisodeProgress();
 }
 function setLibrary(data) {
     if (!data.videos.length) {
         text(el('playback-status'), data.name ? 'Thư mục chưa có video được hỗ trợ.' : 'Đã hủy chọn video.');
         return;
     }
-    sessionStorage.setItem('ergo.library', JSON.stringify(data));
+    player.stop();
+    const pageUrl = new URL(location.href);
+    pageUrl.searchParams.delete('local');
+    history.replaceState(history.state, '', pageUrl.pathname + pageUrl.search);
+    sessionStore.set('ergo.playback-mode', data.local ? 'local' : 'server');
+    sessionStore.remove('ergo.library');
     entries = data.videos;
     const series = [...new Set(entries.map((entry) => entry.series))];
     el('library-series').replaceChildren(...series.map((name) => new Option(name, name)));
     text(el('playback-status'), `${data.name} • ${entries.length} video • Chọn tập để xem`);
     showPlayer();
     refreshEpisodes();
-    const savedId = sessionStorage.getItem('ergo.video');
-    const initial = entries.find((entry) => entry.video.id === savedId) || entries[0];
+    const initial = progress.initial(entries);
     void openVideo(initial);
 }
-async function loadLibrary(picker) {
-    el('choose-video').disabled = true;
-    el('choose-folder').disabled = true;
-    el('server-library').disabled = true;
-    text(el('playback-status'), picker ? 'Chọn video hoặc thư mục trong cửa sổ trên máy tính…' : 'Đang đọc thư viện…');
+async function loadLibrary() {
+    const buttons = ['choose-video', 'choose-folder', 'server-library'].map(el);
+    for (const button of buttons) {
+        button.disabled = true;
+    }
+    text(el('playback-status'), 'Đang đọc thư viện trên máy host…');
     try {
-        setLibrary(
-            await request(
-                picker ? '/selection?type=' + encodeURIComponent(picker) : '/library',
-                picker ? { method: 'POST' } : {}
-            )
-        );
+        const library = await request('/library');
+        setLibrary(library);
+        browserLibrary.dispose();
     } catch (error) {
         text(el('playback-status'), error.message);
     } finally {
-        el('choose-video').disabled = false;
-        el('choose-folder').disabled = false;
-        el('server-library').disabled = false;
+        for (const button of buttons) {
+            button.disabled = false;
+        }
     }
 }
 async function openVideo(entry) {
+    progress.flush();
     const version = ++generation;
-    subGeneration++;
     selected = entry;
-    sessionStorage.setItem('ergo.video', entry.video.id);
+    sessionStore.set('ergo.video', entry.video.id);
     showPlayer();
     el('library-series').value = entry.series;
     refreshEpisodes();
     text(el('watch-title'), `${entry.series} • ${entry.episode}`);
     text(el('playback-status'), entry.video.name);
-    subtitleFiles = entry.subtitles.map((file) => ({ ...file, url: fileUrl(file.id) }));
-    el('local-subtitles').replaceChildren(
-        new Option('Tắt phụ đề', ''),
-        ...subtitleFiles.map((file, index) => new Option(file.name, String(index)))
-    );
-    await renderer.clear();
-    subtitleReport('');
+    await editor.prepare(entry);
     if (version !== generation) {
         return;
     }
@@ -139,94 +176,28 @@ async function openVideo(entry) {
     if (version !== generation) {
         return;
     }
-    if (subtitleFiles.length) {
-        el('local-subtitles').value = '0';
-        await chooseSubtitle();
+    await editor.loadFirst();
+    if (version !== generation) {
+        return;
     }
     const list = entries.filter((item) => item.series === entry.series);
     const index = list.indexOf(entry);
     el('previous-episode').disabled = index <= 0;
     el('next-episode').disabled = index >= list.length - 1;
-    try {
-        localStorage.setItem('playback.last-video', entry.video.name);
-    } catch {}
+    localStore.set('playback.last-video', entry.video.name);
 }
-async function chooseSubtitle() {
-    const version = ++subGeneration;
-    const value = el('local-subtitles').value;
-    if (value === '') {
-        await renderer.clear();
-        subtitleReport('Đã tắt phụ đề.');
-        return;
+el('choose-video').onclick = () =>
+    browserLibrary.choose(false, setLibrary, (message) => text(el('playback-status'), message));
+el('choose-folder').onclick = () =>
+    browserLibrary.choose(true, setLibrary, (message) => text(el('playback-status'), message));
+el('server-library').onclick = () => loadLibrary();
+el('library-series').onchange = () => {
+    const list = entries.filter((entry) => entry.series === el('library-series').value);
+    const initial = progress.initial(list);
+    if (initial) {
+        void openVideo(initial);
     }
-    const file = subtitleFiles[Number(value)];
-    subtitleReport('Đang tải phụ đề…');
-    try {
-        let bytes = file.bytes;
-        if (!bytes) {
-            const response = await fetch(file.url);
-            if (!response.ok) {
-                throw new Error('Không đọc được file phụ đề. Hãy chọn lại thư mục.');
-            }
-            const length = Number(response.headers.get('Content-Length') || 0);
-            if (length > 8 * 1024 * 1024) {
-                throw new Error('Phụ đề vượt giới hạn 8 MB.');
-            }
-            bytes = new Uint8Array(await response.arrayBuffer());
-        }
-        if (bytes.length > 8 * 1024 * 1024) {
-            throw new Error('Phụ đề vượt giới hạn 8 MB.');
-        }
-        if (version !== subGeneration) {
-            return;
-        }
-        await renderer.load(bytes, file.name, selected?.fonts.map((font) => fileUrl(font.id)) || []);
-        if (version === subGeneration) {
-            subtitleReport('Đang dùng: ' + file.name);
-        }
-    } catch (error) {
-        if (version === subGeneration) {
-            subtitleReport('Không hiển thị được phụ đề: ' + error.message);
-        }
-    }
-}
-function settings() {
-    return {
-        original: el('keep-ass-style').checked,
-        font: el('subtitle-font').value.trim() || 'Liberation Sans',
-        scale: Number(el('font-scale').value),
-        delay: Math.max(-3600, Math.min(3600, Number(el('subtitle-delay').value) || 0))
-    };
-}
-async function applySettings() {
-    const value = settings();
-    text(el('font-scale-value'), value.scale + '%');
-    try {
-        await renderer.apply(value);
-    } catch (error) {
-        subtitleReport(error.message);
-    }
-}
-function stepDelay(step) {
-    el('subtitle-delay').value = String(Math.round((settings().delay + step) * 100) / 100);
-    void applySettings();
-}
-el('choose-video').onclick = () => loadLibrary('file');
-el('choose-folder').onclick = () => loadLibrary('folder');
-el('server-library').onclick = () => loadLibrary(false);
-el('library-series').onchange = refreshEpisodes;
-el('local-subtitles').onchange = chooseSubtitle;
-window.addEventListener('ergo:viewchange', (event) => {
-    if (event.detail.previous !== 'watch' || event.detail.view === 'watch') {
-        return;
-    }
-    generation++;
-    subGeneration++;
-    player.stop();
-    controls.reset();
-    void renderer.clear();
-    text(el('playback-status'), '');
-});
+};
 for (const [id, step] of [
     ['previous-episode', -1],
     ['next-episode', 1]
@@ -242,61 +213,6 @@ for (const [id, step] of [
         }
     };
 }
-for (const id of ['keep-ass-style', 'subtitle-font', 'font-scale', 'subtitle-delay']) {
-    el(id).oninput = () => {
-        if (id === 'subtitle-font' || id === 'font-scale') {
-            el('keep-ass-style').checked = false;
-        }
-        clearTimeout(updateTimer);
-        updateTimer = setTimeout(applySettings, 120);
-    };
-}
-el('sub-earlier').onclick = () => stepDelay(-0.25);
-el('sub-later').onclick = () => stepDelay(0.25);
-el('reset-subtitles').onclick = () => {
-    el('keep-ass-style').checked = true;
-    el('subtitle-font').value = 'Liberation Sans';
-    el('font-scale').value = '100';
-    el('subtitle-delay').value = '0';
-    void applySettings();
-};
-el('export-subtitles').onclick = () => {
-    try {
-        renderer.export();
-        subtitleReport('Đã xuất bản ASS đã chỉnh, file nguồn giữ nguyên.');
-    } catch (error) {
-        subtitleReport(error.message);
-    }
-};
-el('add-font').onchange = async (event) => {
-    try {
-        await renderer.addFonts(event.target.files);
-        subtitleReport('Đã nạp font. Nhập đúng tên font trong ô Font chữ.');
-    } catch (error) {
-        subtitleReport(error.message);
-    } finally {
-        event.target.value = '';
-    }
-};
-el('add-subtitle').onchange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) {
-        return;
-    }
-    try {
-        if (file.size > 8 * 1024 * 1024) {
-            throw new Error('Phụ đề vượt giới hạn 8 MB.');
-        }
-        subtitleFiles.push({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
-        el('local-subtitles').append(new Option(file.name, String(subtitleFiles.length - 1)));
-        el('local-subtitles').value = String(subtitleFiles.length - 1);
-        await chooseSubtitle();
-    } catch (error) {
-        subtitleReport(error.message);
-    } finally {
-        event.target.value = '';
-    }
-};
 video.addEventListener('error', () => {
     if (selected && video.error?.code !== 1) {
         report(
@@ -311,13 +227,26 @@ video.addEventListener('ended', () => {
         report('Đã hết tập. Bấm Tập tiếp để xem ' + next.episode);
     }
 });
-window.addEventListener('pagehide', () => player.stop());
+window.addEventListener('pagehide', (event) => {
+    player.stop();
+    void editor.clear();
+    if (!event.persisted) {
+        browserLibrary.dispose();
+    }
+});
 
-const savedLibrary = JSON.parse(sessionStorage.getItem('ergo.library') || 'null');
-if (savedLibrary) {
-    setLibrary(savedLibrary);
+const localChoice = new URLSearchParams(location.search).get('local');
+const localMode = Boolean(localChoice) || sessionStore.get('ergo.playback-mode') === 'local';
+if (localMode) {
+    showPlayer();
+    text(el('watch-title'), 'Chọn video trên thiết bị');
+    text(
+        el('playback-status'),
+        'Chọn video và sub cùng lúc, hoặc chọn thư mục để tự nhận video/sub theo từng EP. File không được tải lên server; sau khi tải lại trang cần chọn lại.'
+    );
+    el(localChoice === 'folder' ? 'choose-folder' : 'choose-video').focus();
 } else {
-    void loadLibrary(false);
+    void loadLibrary();
 }
 
 window.addEventListener('pageshow', (event) => {

@@ -1,95 +1,116 @@
-$('search').onsubmit = async (event) => {
-    event.preventDefault();
+import { $, API_ROUTES, api, sourceUrl, title, element, report } from '../common/anime-api.js';
+import { localStore, sessionStore } from '../common/storage.js';
+import '../common/navigation.js';
+let currentSource = localStore.get('ergo-proxy.anime-source', 'reanime');
+let searchVersion = 0;
+let searchController;
+
+function cardFor(anime, source) {
+    const card = element('button', null, 'card');
+    card.type = 'button';
+    const cover = anime.cover_image?.large || anime.cover_image?.medium;
+    if (cover) {
+        try {
+            const url = new URL(cover);
+            if (url.protocol === 'https:') {
+                const image = element('img');
+                Object.assign(image, {
+                    src: url.href,
+                    alt: title(anime),
+                    loading: 'lazy',
+                    referrerPolicy: 'no-referrer'
+                });
+                card.append(image);
+            }
+        } catch {
+            /* Ignore malformed cover URLs. */
+        }
+    }
+    card.append(
+        element('strong', title(anime)),
+        element('small', `${anime.format || 'ANIME'} • ${anime.season_year || ''}`)
+    );
+    card.onclick = () => {
+        if (!sessionStore.write('ergo.anime', { anime, source })) {
+            report(new Error('Trình duyệt không cho lưu anime đã chọn. Hãy cho phép dữ liệu trang.'));
+            return;
+        }
+        sessionStore.remove('ergo.episodes');
+        window.ErgoNavigation.go('download');
+    };
+    return card;
+}
+async function search() {
+    searchController?.abort();
+    searchController = new AbortController();
     const version = ++searchVersion;
-    ++episodeVersion;
+    const source = currentSource;
     $('message').textContent = 'Đang tìm anime…';
     $('results').replaceChildren();
     try {
-        const source = currentSource;
         const data = await api(
-            sourceUrl(API_ROUTES.anime + '/search?q=' + encodeURIComponent($('query').value.trim()), source)
+            sourceUrl(API_ROUTES.anime + '/search?q=' + encodeURIComponent($('query').value.trim()), source),
+            { signal: searchController.signal }
         );
-        if (version !== searchVersion) return;
+        if (version !== searchVersion) {
+            return;
+        }
         const results = data.results || (data.anime_id ? [data] : []);
         $('message').textContent = results.length
             ? `${results.length} kết quả • Chọn anime để xem tập`
             : 'Không tìm thấy anime.';
-        for (const anime of results) {
-            const card = element('button', null, 'card');
-            card.type = 'button';
-            const cover = anime.cover_image?.large || anime.cover_image?.medium;
-            if (cover) {
-                try {
-                    const url = new URL(cover);
-                    if (url.protocol === 'https:') {
-                        const img = element('img');
-                        img.src = url.href;
-                        img.alt = title(anime);
-                        img.loading = 'lazy';
-                        img.referrerPolicy = 'no-referrer';
-                        card.append(img);
-                    }
-                } catch {}
-            }
-            card.append(
-                element('strong', title(anime)),
-                element('small', `${anime.format || 'ANIME'} • ${anime.season_year || ''}`)
-            );
-            card.onclick = () => choose(anime, source);
-            $('results').append(card);
-        }
+        $('results').replaceChildren(...results.map((anime) => cardFor(anime, source)));
     } catch (error) {
-        if (version === searchVersion) report(error);
+        if (version === searchVersion && error.name !== 'AbortError') {
+            report(error);
+        }
     }
-};
-
-function choose(anime, source = currentSource) {
-    sessionStorage.setItem('ergo.anime', JSON.stringify({ anime, source }));
-    sessionStorage.removeItem('ergo.episodes');
-    window.ErgoNavigation.go('download');
 }
-function updateSourceDescription() {
+function updateSource() {
     const name = $('anime-source').selectedOptions[0]?.textContent || 'ReAnime';
     $('source-description').textContent = `Tìm kiếm và tải phim từ ${name} • Phụ đề từ OpenSubtitles`;
     $('query').placeholder = `Tên anime hoặc link ${name}…`;
 }
-
+$('search').onsubmit = (event) => {
+    event.preventDefault();
+    void search();
+};
 $('anime-source').onchange = () => {
-    currentSource = $('anime-source').value;
-    localStorage.setItem('ergo-proxy.anime-source', currentSource);
+    searchController?.abort();
     ++searchVersion;
+    currentSource = $('anime-source').value;
+    localStore.set('ergo-proxy.anime-source', currentSource);
     $('results').replaceChildren();
     $('query').value = '';
-    updateSourceDescription();
+    $('message').textContent = '';
+    updateSource();
 };
-window.addEventListener('DOMContentLoaded', () => {
-    api(API_ROUTES.anime + '/sources')
-        .then((sources) => {
-            let saved = currentSource;
-            try {
-                saved = localStorage.getItem('ergo-proxy.anime-source') || currentSource;
-            } catch {}
-            if (!sources.length) throw Error('Không có nguồn phim khả dụng.');
-            $('anime-source').replaceChildren(
-                ...sources.map((source) => {
-                    const option = document.createElement('option');
-                    option.value = source.id;
-                    option.textContent = source.name;
-                    return option;
-                })
-            );
-            const next = sources.some((source) => source.id === saved) ? saved : sources[0].id;
-            $('anime-source').value = next;
-            if (next !== currentSource) $('anime-source').onchange();
-            else updateSourceDescription();
-        })
-        .catch(report);
+async function initialize() {
+    try {
+        const sources = await api(API_ROUTES.anime + '/sources');
+        if (!sources.length) {
+            throw new Error('Không có nguồn phim khả dụng.');
+        }
+        $('anime-source').replaceChildren(...sources.map((source) => new Option(source.name, source.id)));
+        currentSource = sources.some((source) => source.id === currentSource) ? currentSource : sources[0].id;
+        $('anime-source').value = currentSource;
+        localStore.set('ergo-proxy.anime-source', currentSource);
+        updateSource();
+        $('query').value = sessionStore.get('ergo.query', '');
+        if ($('query').value) {
+            await search();
+        }
+    } catch (error) {
+        report(error);
+    }
+}
+window.addEventListener('pagehide', () => {
+    searchController?.abort();
+    sessionStore.set('ergo.query', $('query').value);
 });
-
-window.addEventListener('DOMContentLoaded', () => {
-    $('query').value = sessionStorage.getItem('ergo.query') || '';
-    if ($('query').value) {
-        $('search').requestSubmit();
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted && $('query').value && !$('results').childElementCount) {
+        void search();
     }
 });
-window.addEventListener('pagehide', () => sessionStorage.setItem('ergo.query', $('query').value));
+void initialize();

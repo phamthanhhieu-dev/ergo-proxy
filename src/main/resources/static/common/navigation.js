@@ -1,5 +1,11 @@
+import { sessionStore } from './storage.js';
+
 (() => {
-    const pages = { main: '/search/index.html', download: '/download/index.html', watch: '/playback/index.html' };
+    const pages = {
+        main: '/search/index.html',
+        download: '/download/index.html',
+        watch: '/playback/index.html'
+    };
     const current = document.body.dataset.page || 'main';
     document.body.dataset.view = current;
     document.body.classList.toggle('watching', current === 'watch');
@@ -14,12 +20,12 @@
     };
     window.ErgoNavigation = {
         current,
-        go(view) {
+        go(view, query = '') {
             if (view === current) {
                 return;
             }
-            sessionStorage.setItem('ergo.previous', location.pathname);
-            location.assign(pages[view] || '/');
+            sessionStore.set('ergo.previous', location.pathname);
+            location.assign((pages[view] || '/') + query);
         },
         back() {
             button.click();
@@ -31,8 +37,14 @@
         }
     };
     if (!history.state?.ergoPage) {
-        const previous = sessionStorage.getItem('ergo.previous');
-        history.replaceState({ ergoPage: current, ergoPrevious: previous && previous !== location.pathname }, '');
-        sessionStorage.removeItem('ergo.previous');
+        const previous = sessionStore.get('ergo.previous');
+        history.replaceState(
+            {
+                ergoPage: current,
+                ergoPrevious: previous && previous !== location.pathname
+            },
+            ''
+        );
+        sessionStore.remove('ergo.previous');
     }
 })();

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 @lombok.RequiredArgsConstructor
 public class PlaybackLibraryServiceImpl implements PlaybackLibraryService {
 
-    private final NativeFilePickerService nativeFilePickerService;
 
     @Value("${playback.library-root}")
     private String libraryRoot;
@@ -25,31 +24,11 @@ public class PlaybackLibraryServiceImpl implements PlaybackLibraryService {
 
     private final Map<UUID, LibraryFile> files = new ConcurrentHashMap<>();
     private final Map<Path, UUID> paths = new ConcurrentHashMap<>();
-    private final Semaphore picker = new Semaphore(1);
 
     @Override
     public LibrarySnapshotDTO library() {
         LibrarySnapshotDTO response = scanLibrary(Path.of(libraryRoot));
         return response;
-    }
-
-    @Override
-    public LibrarySnapshotDTO pick(String type) {
-        if (!picker.tryAcquire()) {
-            throw new LogicException("PPL_00001", "library.picker.busy");
-        }
-        try {
-            Path selected = nativeFilePickerService.choose(type, Path.of(libraryRoot));
-            LibrarySnapshotDTO response;
-            if (selected == null) {
-                response = new LibrarySnapshotDTO(Const.Common.EMPTY, List.of());
-            } else {
-                response = scanLibrary(selected);
-            }
-            return response;
-        } finally {
-            picker.release();
-        }
     }
 
     private synchronized LibrarySnapshotDTO scanLibrary(Path input) {

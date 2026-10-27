@@ -1,0 +1,75 @@
+# Namespace in Compose = project name, not a Kubernetes namespace.
+# Shared DB/Redis/Kafka belong to a separate project "common"; monitoring to "infras".
+# Mount the host's PLAYBACK_LIBRARY_ROOT (default ~/Videos/Anime) via ERGO_LIBRARY_PATH.
+# DOCKER_* values below are container paths/settings; local .env keeps Windows/local values.
+name: ergo-proxy
+services:
+    be:
+        image: ${APP_IMAGE:-ergo-proxy/app:local}
+        pull_policy: never
+        restart: unless-stopped
+        init: true
+        stop_grace_period: 45s
+        read_only: true
+        cap_drop: [ALL]
+        security_opt: [no-new-privileges:true]
+        environment:
+            SERVER_ADDRESS: "${SERVER_ADDRESS:-0.0.0.0}"
+            SERVER_PORT: "${SERVER_PORT:-8080}"
+            ANIME_PYTHON: "${DOCKER_ANIME_PYTHON:-/opt/venv/bin/python}"
+            ANIME_STORAGE: "${DOCKER_ANIME_STORAGE:-/data/downloads}"
+            ANIME_STREAM_TIMEOUT: "${ANIME_STREAM_TIMEOUT:-21600000}"
+            ANIME_LOG_LEVEL: "${ANIME_LOG_LEVEL:-INFO}"
+            OPENSUBTITLES_API_KEY: "${OPENSUBTITLES_API_KEY:-}"
+            OPENSUBTITLES_USERNAME: "${OPENSUBTITLES_USERNAME:-}"
+            OPENSUBTITLES_PASSWORD: "${OPENSUBTITLES_PASSWORD:-}"
+            OPENSUBTITLES_TOKEN: "${OPENSUBTITLES_TOKEN:-}"
+            SPRING_APPLICATION_NAME: "${SPRING_APPLICATION_NAME:-ergo-proxy}"
+            SPRING_MESSAGES_BASENAME: "${SPRING_MESSAGES_BASENAME:-message/message}"
+            SPRING_MESSAGES_ENCODING: "${SPRING_MESSAGES_ENCODING:-UTF-8}"
+            SPRING_MESSAGES_FALLBACK_TO_SYSTEM_LOCALE: "${SPRING_MESSAGES_FALLBACK_TO_SYSTEM_LOCALE:-false}"
+            SPRING_BANNER_LOCATION: "${SPRING_BANNER_LOCATION:-classpath:log/banner.txt}"
+            LOGGING_CONFIG: "${LOGGING_CONFIG:-classpath:log/logback-spring.xml}"
+            API_LOGGING_ENABLED: "${API_LOGGING_ENABLED:-true}"
+            API_LOGGING_MAX_BODY_SIZE: "${API_LOGGING_MAX_BODY_SIZE:-16384}"
+            REANIME_API_URL: "${REANIME_API_URL:-https://reanime.to}"
+            OPENSUBTITLES_API_URL: "${OPENSUBTITLES_API_URL:-https://api.opensubtitles.com}"
+            FLIXCLOUD_API_URL: "${FLIXCLOUD_API_URL:-https://flixcloud.cc}"
+            SPRING_MAIN_HEADLESS: "${DOCKER_SPRING_MAIN_HEADLESS:-true}"
+            PLAYBACK_LIBRARY_ROOT: "${DOCKER_PLAYBACK_LIBRARY_ROOT:-/media/anime}"
+            PLAYBACK_MAX_FILES: "${PLAYBACK_MAX_FILES:-10000}"
+            JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=65 -XX:+ExitOnOutOfMemoryError
+        ports:
+            - "${ERGO_BIND_ADDRESS:-0.0.0.0}:${ERGO_HTTP_PORT:-8080}:${SERVER_PORT:-8080}"
+        volumes:
+            - type: bind
+              source: ${ERGO_DOWNLOADS_PATH:?Set the host downloads directory}
+              target: /data/downloads
+              bind:
+                  create_host_path: false
+            - type: bind
+              source: ${ERGO_LIBRARY_PATH:?Set the host Videos/Anime directory}
+              target: /media/anime
+              read_only: true
+              bind:
+                  create_host_path: false
+        tmpfs:
+            - /tmp:rw,noexec,nosuid,size=512m,mode=1777
+        mem_limit: 2g
+        cpus: 2
+        pids_limit: 256
+        logging:
+            driver: local
+            options:
+                max-size: 10m
+                max-file: "3"
+                compress: "true"
+        labels:
+            io.ergo-proxy.namespace: ergo-proxy
+        networks: [app]
+networks:
+    app:
+        labels:
+            io.ergo-proxy.namespace: ergo-proxy
+# When shared services exist, add an external network common-shared to be/networks.
+# Create that network in project common; do not recreate shared DBs in this project.

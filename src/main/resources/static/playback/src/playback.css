@@ -1,12 +1,3 @@
-body.watching #search-screen,
-body.watching .source-picker,
-body.watching #back-to-search,
-body.watching #message,
-body.watching #selection,
-body.watching #subtitle-panel,
-body.watching #jobs {
-    display: none !important;
-}
 body.watching main {
     max-width: 1500px;
     padding-top: 24px;
@@ -52,12 +43,21 @@ body.watching main {
 .episode-browser {
     min-width: 0;
 }
+.video-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow-anchor: none;
+}
 #video-stage {
     position: relative;
     background: #000;
+    width: 100%;
+    height: 100%;
     aspect-ratio: 16/9;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 0;
+    isolation: isolate;
 }
 #video-stage video {
     position: absolute;
@@ -66,6 +66,9 @@ body.watching main {
     height: 100%;
     display: block;
     object-fit: contain;
+    z-index: 0;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 #video-stage:fullscreen,
 #video-stage:-webkit-full-screen,
@@ -407,4 +410,100 @@ body.watching main {
     .watch-layout {
         grid-template-columns: minmax(0, 1fr) 300px;
     }
+}
+
+.media-timeline {
+    position: relative;
+}
+.timeline-preview {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: 192px;
+    max-width: 100%;
+    overflow: hidden;
+    border: 1px solid #ffffff55;
+    border-radius: 7px;
+    background: #15151f;
+    box-shadow: 0 4px 18px #0008;
+    pointer-events: none;
+    text-align: center;
+}
+#video-stage .timeline-preview canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.timeline-preview span {
+    display: block;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.resume-prompt {
+    position: absolute;
+    z-index: 6;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: calc(100% - 24px);
+    padding: 18px;
+    border: 1px solid #ffffff40;
+    border-radius: 10px;
+    background: #15151fed;
+    color: #fff;
+    text-align: center;
+}
+.resume-prompt > div {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.resume-prompt button {
+    padding: 10px 14px;
+    font-size: 13px;
+}
+
+.episode-watch-status {
+    display: block;
+    min-height: 1.4em;
+    font-size: 11px;
+    color: #959bb0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.library-episode[data-watched='true'] .episode-watch-status {
+    color: #85dab1;
+}
+.library-episode[data-in-progress='true'] .episode-watch-status {
+    color: #d6c4ff;
+}
+.episode-watch-progress {
+    display: block;
+    width: 100%;
+    height: 4px;
+    accent-color: #b9a9ff;
+    border: 0;
+}
+
+.subtitle-delay-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.subtitle-delay-heading .remember-delay {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+.remember-delay input[type='checkbox'] {
+    margin: 0;
 }
