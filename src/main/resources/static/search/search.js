@@ -1,3 +1,4 @@
+import { LiveSearch } from "../common/live-search.js";
 import {
     $,
     api,
@@ -13,6 +14,23 @@ import "../common/navigation.js";
 let currentSource = localStore.get("ergo-proxy.anime-source", "reanime");
 let searchVersion = 0;
 let searchController;
+let sourceReady = false;
+let queryEdited = false;
+const liveSearch = new LiveSearch({
+    input: $("query"),
+    delay: 0,
+    onSearch: (query) => search(query),
+    onCancel: () => {
+        searchController?.abort();
+        ++searchVersion;
+        $("results").setAttribute("aria-busy", "false");
+    },
+    onClear: () => {
+        queryEdited = true;
+        $("results").replaceChildren();
+        $("message").textContent = "";
+    }
+});
 
 function cardFor(anime, source) {
     const card = element("button", null, "card");
@@ -56,11 +74,15 @@ function cardFor(anime, source) {
     };
     return card;
 }
-async function search() {
+async function search(query = $("query").value.trim()) {
+    if (!sourceReady || !query) {
+        return;
+    }
     searchController?.abort();
     searchController = new AbortController();
     const version = ++searchVersion;
     const source = currentSource;
+    $("results").setAttribute("aria-busy", "true");
     $("message").textContent = "Đang tìm anime…";
     $("results").replaceChildren();
     try {
@@ -68,7 +90,7 @@ async function search() {
             sourceUrl(
                 API_ROUTES.anime +
                     "/search?q=" +
-                    encodeURIComponent($("query").value.trim()),
+                    encodeURIComponent(query),
                 source,
             ),
             { signal: searchController.signal },
@@ -87,6 +109,10 @@ async function search() {
         if (version === searchVersion && error.name !== "AbortError") {
             report(error);
         }
+    } finally {
+        if (version === searchVersion) {
+            $("results").setAttribute("aria-busy", "false");
+        }
     }
 }
 function updateSource() {
@@ -97,11 +123,10 @@ function updateSource() {
 }
 $("search").onsubmit = (event) => {
     event.preventDefault();
-    void search();
+    liveSearch.submit();
 };
 $("anime-source").onchange = () => {
-    searchController?.abort();
-    ++searchVersion;
+    liveSearch.cancel();
     currentSource = $("anime-source").value;
     localStore.set("ergo-proxy.anime-source", currentSource);
     $("results").replaceChildren();
@@ -124,8 +149,12 @@ async function initialize() {
         $("anime-source").value = currentSource;
         localStore.set("ergo-proxy.anime-source", currentSource);
         updateSource();
-        $("query").value = sessionStore.get("ergo.query", "");
+        sourceReady = true;
+        if (!queryEdited) {
+            $("query").value = sessionStore.get("ergo.query", "");
+        }
         if ($("query").value) {
+            liveSearch.cancel();
             await search();
         }
     } catch (error) {
@@ -133,7 +162,7 @@ async function initialize() {
     }
 }
 window.addEventListener("pagehide", () => {
-    searchController?.abort();
+    liveSearch.cancel();
     sessionStore.set("ergo.query", $("query").value);
 });
 window.addEventListener("pageshow", (event) => {
