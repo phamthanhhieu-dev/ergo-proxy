@@ -1,23 +1,29 @@
-import { defineConfig } from 'vite';
-import path from 'node:path';
+import { defineConfig } from "vite";
+import path from "node:path";
 
 export default defineConfig({
-    base: '/playback/dist/',
+    base: "/playback/dist/",
     publicDir: false,
     build: {
-        outDir: 'playback/dist',
+        outDir: "playback/dist",
         emptyOutDir: true,
+        cssCodeSplit: false,
         assetsInlineLimit: 0,
         rolldownOptions: {
-            input: path.resolve('playback/src/playback.js'),
+            input: {
+                playback: path.resolve("playback/src/playback.js"),
+                online: path.resolve("online/online.js"),
+            },
             output: {
-                entryFileNames: 'playback.js',
-                chunkFileNames: 'assets/[name]-[hash].js',
+                entryFileNames: "[name].js",
+                chunkFileNames: "assets/[name]-[hash].js",
                 assetFileNames: (asset) =>
-                    (asset.names || [asset.name]).some((name) => name?.endsWith('.css'))
-                        ? 'playback.css'
-                        : 'assets/[name]-[hash][extname]'
-            }
-        }
-    }
+                    (asset.names || [asset.name]).some((name) =>
+                        name?.endsWith(".css"),
+                    )
+                        ? "playback.css"
+                        : "assets/[name]-[hash][extname]",
+            },
+        },
+    },
 });

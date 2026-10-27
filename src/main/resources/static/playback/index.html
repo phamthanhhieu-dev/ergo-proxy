@@ -1,35 +1,41 @@
 <!doctype html>
 <html lang="vi">
-    <head>
-        <meta charset="utf-8" />
-        <meta content="width=device-width,initial-scale=1" name="viewport" />
-        <title>Ergo Proxy</title>
-        <link href="/common/style.css" rel="stylesheet" />
-        <link href="/playback/dist/playback.css" rel="stylesheet" />
-        <script type="module" src="/playback/dist/playback.js"></script>
-    </head>
-    <body data-page="watch">
-        <header class="site-header">
-            <a class="brand" href="/" aria-label="Ergo Proxy — trang chính">◈ ERGO PROXY</a>
-        </header>
-        <main>
-            <div id="page-toolbar" class="playback-launch">
-                <div><button id="view-back" class="back-button secondary" type="button" hidden>← Quay lại</button></div>
-                <div class="playback-actions">
-                    <button id="choose-video">▶ Chọn video</button
-                    ><button id="choose-folder" class="secondary">Chọn thư mục</button
-                    ><button id="server-library" class="secondary">Mở thư viện đã cấu hình</button>
-                </div>
-            </div>
-            <p id="playback-status" role="status"></p>
-            <div id="playback-root"></div>
-            <div aria-live="polite" id="message" role="status"></div>
-            <footer class="contact-footer">
-                <a href="https://github.com/phamthanhhieu-dev" target="_blank" rel="noopener noreferrer"
-                    >GitHub · phamthanhhieu-dev</a
-                >
-                <a href="mailto:pth29jan@gmail.com">pth29jan@gmail.com</a>
-            </footer>
-        </main>
-    </body>
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <title>Ergo Proxy</title>
+    <link href="/common/style.css" rel="stylesheet" />
+    <link href="/playback/dist/playback.css" rel="stylesheet" />
+    <script src="/playback/dist/playback.js" type="module"></script>
+</head>
+<body data-page="watch">
+<header class="site-header">
+    <a aria-label="Ergo Proxy — trang chính" class="brand" href="/">◈ ERGO PROXY</a>
+</header>
+<main>
+    <div class="playback-launch" id="page-toolbar">
+        <div>
+            <button class="back-button secondary" hidden id="view-back" type="button">← Quay lại</button>
+        </div>
+        <div class="playback-actions">
+            <button id="choose-video">▶ Chọn video
+            </button
+            >
+            <button class="secondary" id="choose-folder">Chọn thư mục
+            </button
+            >
+            <button class="secondary" id="server-library">Mở thư viện đã cấu hình</button>
+        </div>
+    </div>
+    <p id="playback-status" role="status"></p>
+    <div id="playback-root"></div>
+    <div aria-live="polite" id="message" role="status"></div>
+    <footer class="contact-footer">
+        <a href="https://github.com/phamthanhhieu-dev" rel="noopener noreferrer" target="_blank"
+        >GitHub · phamthanhhieu-dev</a
+        >
+        <a href="mailto:pth29jan@gmail.com">pth29jan@gmail.com</a>
+    </footer>
+</main>
+</body>
 </html>

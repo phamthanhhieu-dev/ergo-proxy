@@ -9,13 +9,6 @@ import com.ergoproxy.platform.dto.subtitle.SubtitleSearchResponseDTO;
 import com.ergoproxy.platform.exception.LogicException;
 import com.ergoproxy.platform.util.Messages;
 import com.ergoproxy.platform.util.SubtitleDiagnostics;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -27,31 +20,33 @@ import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 @RequiredArgsConstructor
 public class OpenSubtitleServiceImpl implements OpenSubtitleService {
 
+    private final ObjectMapper objectMapper;
+    private final OpenSubtitleHttpClient restClient;
     @Value("${opensubtitles.api.url}")
     private String openSubtitlesApiUrl;
-
     @Value("${opensubtitles.api-key:}")
     private String apiKey;
-
     @Value("${opensubtitles.username:}")
     private String username;
-
     @Value("${opensubtitles.password:}")
     private String password;
-
     @Value("${opensubtitles.token:}")
     private String configuredToken;
-
-    private final ObjectMapper objectMapper;
-
-    private final OpenSubtitleHttpClient restClient;
-
     private String token = Const.Common.EMPTY;
     private Instant tokenExpires = Instant.EPOCH;
+    private boolean configuredTokenRejected;
 
     static void validateApiLink(URI uri) {
         String host = Objects.toString(uri.getHost(), Const.Common.EMPTY).toLowerCase(Locale.ROOT);
@@ -202,17 +197,17 @@ public class OpenSubtitleServiceImpl implements OpenSubtitleService {
     }
 
     private synchronized String bearer() {
-        if (!configuredToken.isBlank()) {
+        Instant now = Instant.now();
+        if (!token.isBlank() && now.isBefore(tokenExpires)) {
+            return token;
+        }
+        if (!configuredToken.isBlank() && !configuredTokenRejected) {
             String response = configuredToken;
             return response;
         }
         if (username.isBlank() || password.isBlank()) {
             String response = Const.Common.EMPTY;
             return response;
-        }
-        Instant now = Instant.now();
-        if (now.isBefore(tokenExpires)) {
-            return token;
         }
         String endpoint = apiUrl() + Const.Path.LOGIN;
         Map<String, String> credentials = new LinkedHashMap<>();
@@ -349,9 +344,30 @@ public class OpenSubtitleServiceImpl implements OpenSubtitleService {
         }
     }
 
-    private JsonNode requestDownload(long fileId) {
-        String endpoint = apiUrl() + Const.Path.DOWNLOAD;
+    private synchronized JsonNode requestDownload(long fileId) {
         String bearerToken = bearer();
+        try {
+            JsonNode response = requestDownloadWithToken(fileId, bearerToken);
+            return response;
+        } catch (RestClientResponseException exception) {
+            boolean unauthorized = exception.getStatusCode().value() == HttpStatus.UNAUTHORIZED.value();
+            boolean accountAvailable = !username.isBlank() && !password.isBlank();
+            if (!unauthorized || !accountAvailable) {
+                LogicException failure = apiError(exception);
+                throw failure;
+            }
+            // A rejected token must never be selected again, including an ENV token.
+            configuredTokenRejected = true;
+            token = Const.Common.EMPTY;
+            tokenExpires = Instant.EPOCH;
+            String refreshedToken = bearer();
+            JsonNode response = requestDownloadWithToken(fileId, refreshedToken);
+            return response;
+        }
+    }
+
+    private JsonNode requestDownloadWithToken(long fileId, String bearerToken) {
+        String endpoint = apiUrl() + Const.Path.DOWNLOAD;
         Map<String, Long> parameters = new LinkedHashMap<>();
         parameters.put(Const.Common.FILE_ID, fileId);
         RestClient.RequestBodySpec request = restClient.post().uri(endpoint);
@@ -361,7 +377,7 @@ public class OpenSubtitleServiceImpl implements OpenSubtitleService {
         RestClient.ResponseSpec upstream = request.retrieve();
         JsonNode response = upstream.body(JsonNode.class);
         if (response == null || response.path(Const.Common.LINK).asText().isBlank()) {
-            throw new LogicException("RDOS_00001", "subtitle.download.link.is.null.or.empty");
+            throw new LogicException("RDWTOS_00001", "subtitle.download.link.is.null.or.empty");
         }
         return response;
     }
@@ -450,7 +466,9 @@ public class OpenSubtitleServiceImpl implements OpenSubtitleService {
         return response;
     }
 
-    private record ApiReply(URI redirect, JsonNode data) {}
+    private record ApiReply(URI redirect, JsonNode data) {
+    }
 
-    private record FileReply(URI redirect, byte[] bytes) {}
+    private record FileReply(URI redirect, byte[] bytes) {
+    }
 }

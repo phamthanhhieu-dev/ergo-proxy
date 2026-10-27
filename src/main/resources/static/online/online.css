@@ -1,0 +1,66 @@
+#online-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+#online-frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+#online-stage canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+#online-stage:fullscreen {
+    width: 100vw;
+    height: 100dvh;
+    display: grid;
+    place-items: center;
+}
+
+#online-stage:fullscreen iframe,
+#online-stage:fullscreen canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#online-results {
+    width: 100%;
+    margin: 12px 0;
+}
+
+#online-season {
+    max-width: 100px;
+}
+
+#online-stage:fullscreen iframe,
+#online-stage:fullscreen canvas {
+    width: min(100vw, 177.7778dvh);
+    height: min(100dvh, 56.25vw);
+    inset: auto;
+}
+
+#online-downloads summary {
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+#online-downloads .playback-actions {
+    margin-top: 12px;
+}
+
+#online-downloads label {
+    min-width: 0;
+}

@@ -6,7 +6,8 @@ public class PaginationResponseDTO<T> extends PaginationDTO {
 
     private List<T> items;
 
-    public PaginationResponseDTO() {}
+    public PaginationResponseDTO() {
+    }
 
     public PaginationResponseDTO(List<T> items) {
         this.items = items;

@@ -11,8 +11,8 @@ services:
         init: true
         stop_grace_period: 45s
         read_only: true
-        cap_drop: [ALL]
-        security_opt: [no-new-privileges:true]
+        cap_drop: [ ALL ]
+        security_opt: [ no-new-privileges:true ]
         environment:
             SERVER_ADDRESS: "${SERVER_ADDRESS:-0.0.0.0}"
             SERVER_PORT: "${SERVER_PORT:-8080}"
@@ -42,17 +42,17 @@ services:
         ports:
             - "${ERGO_BIND_ADDRESS:-0.0.0.0}:${ERGO_HTTP_PORT:-8080}:${SERVER_PORT:-8080}"
         volumes:
-            - type: bind
-              source: ${ERGO_DOWNLOADS_PATH:?Set the host downloads directory}
-              target: /data/downloads
-              bind:
-                  create_host_path: false
-            - type: bind
-              source: ${ERGO_LIBRARY_PATH:?Set the host Videos/Anime directory}
-              target: /media/anime
-              read_only: true
-              bind:
-                  create_host_path: false
+            -   type: bind
+                source: ${ERGO_DOWNLOADS_PATH:?Set the host downloads directory}
+                target: /data/downloads
+                bind:
+                    create_host_path: false
+            -   type: bind
+                source: ${ERGO_LIBRARY_PATH:?Set the host Videos/Anime directory}
+                target: /media/anime
+                read_only: true
+                bind:
+                    create_host_path: false
         tmpfs:
             - /tmp:rw,noexec,nosuid,size=512m,mode=1777
         mem_limit: 2g
@@ -66,7 +66,7 @@ services:
                 compress: "true"
         labels:
             io.ergo-proxy.namespace: ergo-proxy
-        networks: [app]
+        networks: [ app ]
 networks:
     app:
         labels:

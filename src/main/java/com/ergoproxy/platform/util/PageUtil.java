@@ -7,7 +7,8 @@ public final class PageUtil {
     private static final int DEFAULT_PAGE = 0;
     private static final int DEFAULT_SIZE = 20;
 
-    private PageUtil() {}
+    private PageUtil() {
+    }
 
     public static int getPage(Integer page) {
         int response = page == null || page < 0 ? DEFAULT_PAGE : page;

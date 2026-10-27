@@ -3,8 +3,9 @@ package com.ergoproxy.platform.service;
 import com.ergoproxy.platform.dto.subtitle.SubtitleDownloadRequestDTO;
 import com.ergoproxy.platform.dto.subtitle.SubtitleFileDTO;
 import com.ergoproxy.platform.dto.subtitle.SubtitleSearchResponseDTO;
-import java.util.Map;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Map;
 
 public interface OpenSubtitleService {
     Map<String, Boolean> configuration();

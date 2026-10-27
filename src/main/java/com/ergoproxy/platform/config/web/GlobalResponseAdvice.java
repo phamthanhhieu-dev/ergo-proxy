@@ -43,10 +43,10 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
     ) {
         if (
             body instanceof GlobalApiResponse<?> ||
-            body instanceof Resource ||
-            body instanceof byte[] ||
-            response.getHeaders().containsHeader(HttpHeaders.CONTENT_DISPOSITION) ||
-            MediaType.TEXT_EVENT_STREAM.isCompatibleWith(contentType)
+                body instanceof Resource ||
+                body instanceof byte[] ||
+                response.getHeaders().containsHeader(HttpHeaders.CONTENT_DISPOSITION) ||
+                MediaType.TEXT_EVENT_STREAM.isCompatibleWith(contentType)
         ) {
             return body;
         }

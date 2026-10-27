@@ -8,8 +8,10 @@ export async function requestJson(url, options) {
         return null;
     }
     if (body === null) {
-        throw new Error('Máy chủ trả về dữ liệu JSON không hợp lệ.');
+        throw new Error("Máy chủ trả về dữ liệu JSON không hợp lệ.");
     }
-    const wrapped = typeof body.status === 'number' && Object.prototype.hasOwnProperty.call(body, 'data');
+    const wrapped =
+        typeof body.status === "number" &&
+        Object.prototype.hasOwnProperty.call(body, "data");
     return wrapped ? body.data : body;
 }

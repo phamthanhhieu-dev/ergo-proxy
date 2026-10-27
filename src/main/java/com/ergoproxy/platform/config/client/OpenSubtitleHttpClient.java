@@ -1,12 +1,13 @@
 package com.ergoproxy.platform.config.client;
 
 import com.ergoproxy.platform.config.logging.HttpLoggingInterceptor;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.time.Duration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.time.Duration;
 
 @Component
 public class OpenSubtitleHttpClient {

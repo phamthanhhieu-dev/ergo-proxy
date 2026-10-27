@@ -2,6 +2,7 @@ package com.ergoproxy.platform.util;
 
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.exception.LogicException;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -13,7 +14,8 @@ public final class Messages {
 
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("message.message", Locale.ROOT);
 
-    private Messages() {}
+    private Messages() {
+    }
 
     public static String get(String key, Object... args) {
         Object[] values = new Object[args.length];
