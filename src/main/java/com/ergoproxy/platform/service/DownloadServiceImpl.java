@@ -11,13 +11,6 @@ import com.ergoproxy.platform.entity.DownloadJob;
 import com.ergoproxy.platform.exception.LogicException;
 import com.ergoproxy.platform.util.Messages;
 import jakarta.annotation.PreDestroy;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -28,18 +21,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 @Service
 @RequiredArgsConstructor
 public class DownloadServiceImpl implements DownloadService {
 
-    @Value("${anime.storage}")
-    private String storage;
-
     private final AnimeSourceService animeSourceService;
     private final OpenSubtitleService openSubtitleService;
-
     private final Map<UUID, DownloadJob> jobs = new ConcurrentHashMap<>();
     private final ThreadPoolExecutor worker = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
+    @Value("${anime.storage}")
+    private String storage;
 
     private DownloadResponseDTO snapshot(DownloadJob job) throws IOException {
         synchronized (job) {

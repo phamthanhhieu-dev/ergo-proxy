@@ -2,7 +2,8 @@ package com.ergoproxy.platform.constant;
 
 public final class Const {
 
-    private Const() {}
+    private Const() {
+    }
 
     public static final class Subtitle {
 
@@ -48,7 +49,8 @@ public final class Const {
         public static final String COM_SUBDOMAIN_SUFFIX = ".opensubtitles.com";
         public static final String ORG_SUBDOMAIN_SUFFIX = ".opensubtitles.org";
 
-        private Subtitle() {}
+        private Subtitle() {
+        }
     }
 
     public static final class File {
@@ -65,7 +67,8 @@ public final class Const {
         public static final String DEFAULT_SUBTITLE_FILENAME = "subtitle.txt";
         public static final String SUBTITLE_ERROR_LABEL = " sub: ";
 
-        private File() {}
+        private File() {
+        }
     }
 
     public static final class Environment {
@@ -76,7 +79,8 @@ public final class Const {
         public static final String API_LOG_ENABLED = "ERGO_API_LOG_ENABLED";
         public static final String API_LOG_LIMIT = "ERGO_API_LOG_LIMIT";
 
-        private Environment() {}
+        private Environment() {
+        }
     }
 
     public static final class Python {
@@ -100,7 +104,8 @@ public final class Const {
         public static final java.time.Duration JSON_TIMEOUT = java.time.Duration.ofMinutes(3);
         public static final java.time.Duration DOWNLOAD_TIMEOUT = java.time.Duration.ofHours(2);
 
-        private Python() {}
+        private Python() {
+        }
     }
 
     public static final class Regex {
@@ -127,10 +132,12 @@ public final class Const {
         public static final String ANIME_SLUG = "[a-zA-Z0-9-]{1,180}";
         public static final String FLIXCLOUD_EMBED_PATH = "/e/[a-zA-Z0-9_-]+/?";
 
-        private Regex() {}
+        private Regex() {
+        }
     }
 
     public static final class Common {
+        public static final String EMBED_URL = "embedUrl";
 
         public static final String APPLICATION_ZIP = "application/zip";
         public static final String HEADER_SUBTITLE_FILENAME = "X-Subtitle-Filename";
@@ -271,14 +278,16 @@ public final class Const {
         public static final String SRT_EXTENSION = ".srt";
         public static final String ZIP_EXTENSION = ".zip";
 
-        private Common() {}
+        private Common() {
+        }
     }
 
     public static final class Version {
 
         public static final String V1 = "/v1";
 
-        private Version() {}
+        private Version() {
+        }
     }
 
     public static final class Playback {
@@ -288,18 +297,15 @@ public final class Const {
         public static final java.util.Set<String> FONT_EXTENSIONS = java.util.Set.of("ttf", "otf", "woff", "woff2");
         public static final String EPISODE_PATTERN = "(?i)^EP(?:ISODE)?[ _-]*(\\d+)$";
 
-        private Playback() {}
+        private Playback() {
+        }
     }
 
     public static final class Path {
 
-        public static final String PLAYBACK = Path.API + Version.V1 + "/playback";
-
         public static final String OPENSUBTITLES_SEARCH = "/subtitles";
-
         public static final String EMBED = "/e/";
         public static final String DOWNLOAD_PAGE = "/d/";
-
         public static final String ANIME = "/anime/";
         public static final String FLIX = "/flix/";
         public static final String LOGIN = "/login";
@@ -307,6 +313,7 @@ public final class Const {
         public static final String PROGRESS = "/progress";
         public static final String PAGE_DATA = "/__data.json";
         public static final String API = "/api";
+        public static final String PLAYBACK = Path.API + Version.V1 + "/playback";
         public static final String ORIGINAL = "/original";
         public static final String SUBTITLE = "/subtitle";
         public static final String BUNDLE = "/bundle";
@@ -314,6 +321,7 @@ public final class Const {
         public static final String NATIVE = "/native";
         public static final String NATIVE_ARCHIVE = "/native-archive";
 
-        private Path() {}
+        private Path() {
+        }
     }
 }

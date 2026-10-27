@@ -8,6 +8,13 @@ import com.ergoproxy.platform.exception.LogicException;
 import com.ergoproxy.platform.util.DataUtil;
 import com.ergoproxy.platform.util.Messages;
 import com.ergoproxy.platform.util.SubtitleDiagnostics;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,30 +32,21 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
 public class ReanimeServiceImpl implements ReanimeService {
 
-    @Value("${anime.python}")
-    private String python;
-
-    @Value("${reanime.api.url}")
-    private String reanimeApiUrl;
-
-    @Value("${flixcloud.api.url}")
-    private String flixcloudApiUrl;
-
     private static final Pattern ANSI_ESCAPE = Pattern.compile(Const.Regex.ANSI_ESCAPE);
     private final ApiLogWriter apiLogWriter;
     private final OriginalHttpClient originalHttpClient;
     private final ObjectMapper objectMapper;
+    @Value("${anime.python}")
+    private String python;
+    @Value("${reanime.api.url}")
+    private String reanimeApiUrl;
+    @Value("${flixcloud.api.url}")
+    private String flixcloudApiUrl;
 
     @Override
     public String id() {
@@ -286,6 +284,18 @@ public class ReanimeServiceImpl implements ReanimeService {
         }
         String path = embed.getPath().replaceFirst(Const.Path.EMBED, Const.Path.DOWNLOAD_PAGE);
         String response = flixcloudApiUrl + path.replaceAll(Const.Regex.TRAILING_SLASH, Const.Common.EMPTY);
+        return response;
+    }
+
+    @Override
+    public String embedUrl(OriginalDownloadRequestDTO request) throws Exception {
+        JsonNode servers = loadServers(request);
+        URI embed = findEmbed(servers, request);
+        OriginalHttpClient.validate(embed);
+        if (!Const.Common.FLIXCLOUD_HOST.equals(embed.getHost()) || !embed.getPath().matches(Const.Regex.FLIXCLOUD_EMBED_PATH)) {
+            throw new LogicException("EUR_00001", "original.player.link.invalid");
+        }
+        String response = embed.toString();
         return response;
     }
 

@@ -9,7 +9,8 @@ public final class DataUtil {
     public static final ZoneId APP_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
     private static final DateTimeFormatter APP_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(APP_ZONE);
 
-    private DataUtil() {}
+    private DataUtil() {
+    }
 
     public static boolean isNull(Object value) {
         boolean response = value == null;

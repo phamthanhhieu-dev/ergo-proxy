@@ -1,9 +1,10 @@
 package com.ergoproxy.platform.service;
 
+import tools.jackson.databind.JsonNode;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
-import tools.jackson.databind.JsonNode;
 
 public interface ReanimeService extends AnimeProvider {
     JsonNode json(String... args) throws Exception;

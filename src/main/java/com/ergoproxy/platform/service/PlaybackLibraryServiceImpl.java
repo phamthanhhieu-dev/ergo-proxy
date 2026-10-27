@@ -1,34 +1,76 @@
 package com.ergoproxy.platform.service;
 
 import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.dto.playback.*;
+import com.ergoproxy.platform.dto.playback.LibrarySnapshotDTO;
+import com.ergoproxy.platform.dto.playback.PlaybackFileDTO;
+import com.ergoproxy.platform.dto.playback.PlaybackVideoDTO;
+import com.ergoproxy.platform.dto.playback.SubtitleLibraryEntryDTO;
 import com.ergoproxy.platform.entity.playback.LibraryFile;
 import com.ergoproxy.platform.exception.LogicException;
-import java.nio.file.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @lombok.RequiredArgsConstructor
 public class PlaybackLibraryServiceImpl implements PlaybackLibraryService {
 
 
-    @Value("${playback.library-root}")
-    private String libraryRoot;
-
-    @Value("${playback.max-files:10000}")
-    private int maxFiles;
-
     private final Map<UUID, LibraryFile> files = new ConcurrentHashMap<>();
     private final Map<Path, UUID> paths = new ConcurrentHashMap<>();
+    @Value("${playback.library-root}")
+    private String libraryRoot;
+    @Value("${playback.max-files:10000}")
+    private int maxFiles;
 
     @Override
     public LibrarySnapshotDTO library() {
         LibrarySnapshotDTO response = scanLibrary(Path.of(libraryRoot));
         return response;
+    }
+
+    @Override
+    public synchronized List<SubtitleLibraryEntryDTO> scanSubtitleLibrary() {
+        try {
+            Path base = Path.of(libraryRoot).toRealPath();
+            Set<Path> directories = new HashSet<>();
+            List<SubtitleLibraryEntryDTO> response = new ArrayList<>();
+            int count = 0;
+            try (java.util.stream.Stream<Path> entries = Files.walk(base, 7)) {
+                Iterator<Path> iterator = entries.iterator();
+                while (iterator.hasNext()) {
+                    Path path = iterator.next();
+                    count++;
+                    if (count > maxFiles) {
+                        throw new LogicException("SSLPL_00001", "library.scan.limit", maxFiles);
+                    }
+                    boolean regularFile = Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS);
+                    if (!regularFile || !Const.Playback.SUBTITLE_EXTENSIONS.contains(extension(path))) {
+                        continue;
+                    }
+                    if (!directories.add(path.getParent())) {
+                        continue;
+                    }
+                    // Reuse the same EP naming, sibling subtitles, font discovery and file registry as offline playback.
+                    PlaybackVideoDTO entry = describe(path, base);
+                    SubtitleLibraryEntryDTO subtitleEntry = new SubtitleLibraryEntryDTO(entry.series(), entry.episode(), entry.subtitles(), entry.fonts());
+                    response.add(subtitleEntry);
+                }
+            }
+            return response;
+        } catch (LogicException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new LogicException(exception, "SSLPL_00002", "library.scan.failed");
+        }
     }
 
     private synchronized LibrarySnapshotDTO scanLibrary(Path input) {
@@ -43,7 +85,7 @@ public class PlaybackLibraryServiceImpl implements PlaybackLibraryService {
                 }
                 videos.add(selected);
             } else {
-                collect(base, videos, new int[] { 0 }, 0);
+                collect(base, videos, new int[]{0}, 0);
             }
             List<PlaybackVideoDTO> entries = new ArrayList<>();
             for (Path video : videos) {

@@ -10,13 +10,14 @@ import com.ergoproxy.platform.service.DownloadService;
 import com.ergoproxy.platform.service.OpenSubtitleService;
 import com.ergoproxy.platform.service.SubtitleArchiveService;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

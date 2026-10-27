@@ -1,13 +1,14 @@
 package com.ergoproxy.platform.entity;
 
 import com.ergoproxy.platform.constant.Const;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter

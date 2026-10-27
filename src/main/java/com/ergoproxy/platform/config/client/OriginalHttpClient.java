@@ -3,36 +3,35 @@ package com.ergoproxy.platform.config.client;
 import com.ergoproxy.platform.config.logging.ApiLogWriter;
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.exception.LogicException;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.util.Locale;
+
 @Component
 @RequiredArgsConstructor
 public class OriginalHttpClient {
 
+    private final ObjectMapper mapper;
+    private final ApiLogWriter apiLogWriter;
     @Value("${flixcloud.api.url}")
     private String flixcloudApiUrl;
-
-    private final ObjectMapper mapper;
-
-    private final ApiLogWriter apiLogWriter;
 
     public static void validate(URI uri) {
         String host = String.valueOf(uri.getHost()).toLowerCase(Locale.ROOT);
         if (
             !Const.Common.HTTPS.equalsIgnoreCase(uri.getScheme()) ||
-            uri.getUserInfo() != null ||
-            (uri.getPort() != -1 && uri.getPort() != 443) ||
-            !(host.equals(Const.Common.REANIME_HOST) || host.equals(Const.Common.FLIXCLOUD_HOST) || fileHost(host))
+                uri.getUserInfo() != null ||
+                (uri.getPort() != -1 && uri.getPort() != 443) ||
+                !(host.equals(Const.Common.REANIME_HOST) || host.equals(Const.Common.FLIXCLOUD_HOST) || fileHost(host))
         ) {
             throw new LogicException("VOHC_00001", "original.host.invalid", host);
         }

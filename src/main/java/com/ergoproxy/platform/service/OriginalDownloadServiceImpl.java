@@ -10,6 +10,16 @@ import com.ergoproxy.platform.exception.LogicException;
 import com.ergoproxy.platform.util.Messages;
 import com.ergoproxy.platform.util.SubtitleDiagnostics;
 import jakarta.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,15 +33,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -146,8 +147,8 @@ public class OriginalDownloadServiceImpl implements OriginalDownloadService {
             OriginalHttpClient.validate(pageUri);
             if (
                 !pageUri.getHost().equals(Const.Common.FLIXCLOUD_HOST) ||
-                !pageUri.getPath().matches(Const.Regex.FLIXCLOUD_DOWNLOAD_PATH) ||
-                pageUri.getRawQuery() != null
+                    !pageUri.getPath().matches(Const.Regex.FLIXCLOUD_DOWNLOAD_PATH) ||
+                    pageUri.getRawQuery() != null
             ) {
                 throw new LogicException("POD_00002", "original.page.url.invalid");
             }
@@ -284,7 +285,8 @@ public class OriginalDownloadServiceImpl implements OriginalDownloadService {
         if (ticket.getActive() != null) {
             try {
                 ticket.getActive().close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 

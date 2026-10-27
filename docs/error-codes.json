@@ -213,7 +213,7 @@
         "method": "requestDownload",
         "key": "subtitle.download.link.is.null.or.empty",
         "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
-        "active": true
+        "active": false
     },
     {
         "code": "DFOS_00001",
@@ -821,6 +821,38 @@
         "method": "prepare",
         "key": "bundle.subtitle.key.is.null.or.empty",
         "file": "src/main/java/com/ergoproxy/platform/service/EpisodeBundleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "EUR_00001",
+        "domain": "ReanimeServiceImpl",
+        "method": "embedUrl",
+        "key": "original.player.link.invalid",
+        "file": "src/main/java/com/ergoproxy/platform/service/ReanimeServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "RDWTOS_00001",
+        "domain": "OpenSubtitleServiceImpl",
+        "method": "requestDownloadWithToken",
+        "key": "subtitle.download.link.is.null.or.empty",
+        "file": "src/main/java/com/ergoproxy/platform/service/OpenSubtitleServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SSLPL_00001",
+        "domain": "PlaybackLibraryServiceImpl",
+        "method": "scanSubtitleLibrary",
+        "key": "library.scan.limit",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
+        "active": true
+    },
+    {
+        "code": "SSLPL_00002",
+        "domain": "PlaybackLibraryServiceImpl",
+        "method": "scanSubtitleLibrary",
+        "key": "library.scan.failed",
+        "file": "src/main/java/com/ergoproxy/platform/service/PlaybackLibraryServiceImpl.java",
         "active": true
     }
 ]

@@ -3,6 +3,7 @@ package com.ergoproxy.platform.entity;
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.dto.download.DownloadProgressResponseDTO;
 import com.ergoproxy.platform.util.Messages;
+
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.Deque;
