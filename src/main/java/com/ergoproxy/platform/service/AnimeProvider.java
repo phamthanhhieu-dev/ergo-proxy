@@ -1,9 +1,10 @@
 package com.ergoproxy.platform.service;
 
 import com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO;
+import tools.jackson.databind.JsonNode;
+
 import java.nio.file.Path;
 import java.util.function.Consumer;
-import tools.jackson.databind.JsonNode;
 
 public interface AnimeProvider {
     String id();
@@ -13,6 +14,8 @@ public interface AnimeProvider {
     JsonNode search(String query) throws Exception;
 
     JsonNode episodes(String slug) throws Exception;
+
+    String embedUrl(OriginalDownloadRequestDTO request) throws Exception;
 
     String downloadPage(OriginalDownloadRequestDTO request) throws Exception;
 

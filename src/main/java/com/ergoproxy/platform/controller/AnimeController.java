@@ -6,15 +6,16 @@ import com.ergoproxy.platform.dto.download.DownloadResponseDTO;
 import com.ergoproxy.platform.service.AnimeSourceService;
 import com.ergoproxy.platform.service.DownloadService;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.JsonNode;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(Const.Path.API + Const.Version.V1 + Const.Path.ANIME)
@@ -39,6 +40,13 @@ public class AnimeController {
     @GetMapping("/anime/{slug}/episodes")
     public JsonNode episodes(@PathVariable String slug, @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
         JsonNode response = animeSourceService.episodes(slug, source);
+        return response;
+    }
+
+    @PostMapping("/embed")
+    public Map<String, String> embed(@Valid @RequestBody com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO request,
+                                     @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
+        Map<String, String> response = animeSourceService.embed(request, source);
         return response;
     }
 

@@ -7,7 +7,8 @@ public class PaginationDTO {
     private Long total;
     private Integer totalPages;
 
-    public PaginationDTO() {}
+    public PaginationDTO() {
+    }
 
     public PaginationDTO(Integer page, Integer size, Long total, Integer totalPages) {
         this.page = page;

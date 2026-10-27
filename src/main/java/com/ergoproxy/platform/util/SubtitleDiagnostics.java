@@ -2,19 +2,21 @@ package com.ergoproxy.platform.util;
 
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.exception.LogicException;
-import java.util.Objects;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
 import org.slf4j.MDC;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.UnknownContentTypeException;
 
+import java.util.Objects;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
+
 public final class SubtitleDiagnostics {
 
     public static final String MDC_KEY = "opensubtitlesRequest";
 
-    private SubtitleDiagnostics() {}
+    private SubtitleDiagnostics() {
+    }
 
     public static String category(Throwable error) {
         for (Throwable cause = error; cause != null; cause = cause.getCause()) {
@@ -40,8 +42,8 @@ public final class SubtitleDiagnostics {
             }
             if (
                 cause instanceof HttpMessageConversionException ||
-                cause instanceof tools.jackson.core.JacksonException ||
-                cause instanceof UnknownContentTypeException
+                    cause instanceof tools.jackson.core.JacksonException ||
+                    cause instanceof UnknownContentTypeException
             ) {
                 String response = "JSON";
                 return response;

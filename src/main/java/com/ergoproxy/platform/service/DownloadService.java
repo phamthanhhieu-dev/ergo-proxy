@@ -6,12 +6,13 @@ import com.ergoproxy.platform.dto.download.DownloadResponseDTO;
 import com.ergoproxy.platform.dto.download.DownloadVideoTargetResponseDTO;
 import com.ergoproxy.platform.dto.subtitle.SubtitleFileDTO;
 import com.ergoproxy.platform.dto.subtitle.SubtitleSaveRequestDTO;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.ResponseEntity;
 
 public interface DownloadService {
     DownloadResponseDTO create(DownloadRequestDTO request) throws Exception;

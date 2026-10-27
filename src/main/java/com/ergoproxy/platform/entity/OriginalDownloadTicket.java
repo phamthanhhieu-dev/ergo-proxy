@@ -3,14 +3,15 @@ package com.ergoproxy.platform.entity;
 import com.ergoproxy.platform.config.client.OriginalHttpClient;
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.util.Messages;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.Future;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Setter

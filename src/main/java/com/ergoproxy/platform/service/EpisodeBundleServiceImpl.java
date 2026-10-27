@@ -13,15 +13,6 @@ import com.ergoproxy.platform.exception.LogicException;
 import com.ergoproxy.platform.util.Messages;
 import com.ergoproxy.platform.util.SubtitleDiagnostics;
 import jakarta.validation.Validator;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ContentDisposition;
@@ -33,17 +24,26 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 @Service
 @RequiredArgsConstructor
 public class EpisodeBundleServiceImpl implements EpisodeBundleService {
-
-    @Value("${flixcloud.api.url}")
-    private String flixcloudApiUrl;
 
     private final OriginalDownloadService originalDownloadService;
     private final OpenSubtitleService openSubtitleService;
     private final ObjectMapper objectMapper;
     private final Validator validator;
+    @Value("${flixcloud.api.url}")
+    private String flixcloudApiUrl;
 
     static String component(String input, String fallback) {
         String name = Objects.toString(input, Const.Common.EMPTY).replaceAll(Const.Regex.UNSAFE_FILENAME_CHARACTERS, Const.Common.UNDERSCORE)
@@ -100,8 +100,8 @@ public class EpisodeBundleServiceImpl implements EpisodeBundleService {
             }
             if (
                 request.getPageUrl() != null &&
-                !request.getPageUrl().isBlank() &&
-                (episodes.size() != 1 || !request.getPageUrl().matches(Pattern.quote(flixcloudApiUrl) + Const.Regex.FLIXCLOUD_DOWNLOAD_PATH))
+                    !request.getPageUrl().isBlank() &&
+                    (episodes.size() != 1 || !request.getPageUrl().matches(Pattern.quote(flixcloudApiUrl) + Const.Regex.FLIXCLOUD_DOWNLOAD_PATH))
             ) {
                 throw new LogicException("PEB_00005", "bundle.request.invalid");
             }
@@ -254,9 +254,9 @@ public class EpisodeBundleServiceImpl implements EpisodeBundleService {
                     if (fileId == null) {
                         subError =
                             Messages.get("bundle.subtitle.not.found", episode) +
-                            Const.Common.OPEN_PARENTHESIS +
-                            request.getLanguage() +
-                            Const.Common.CLOSE_PARENTHESIS_PERIOD;
+                                Const.Common.OPEN_PARENTHESIS +
+                                request.getLanguage() +
+                                Const.Common.CLOSE_PARENTHESIS_PERIOD;
                     } else {
                         sub = openSubtitleService.download(fileId);
                     }

@@ -1,5 +1,5 @@
 // Storage can be blocked, full, or contain invalid JSON. Callers decide how to report failures.
-export function createStorage(scope = 'localStorage', onError = () => {}) {
+export function createStorage(scope = "localStorage", onError = () => {}) {
     return {
         get(key, fallback = null) {
             try {
@@ -44,8 +44,8 @@ export function createStorage(scope = 'localStorage', onError = () => {}) {
                 onError(error);
                 return false;
             }
-        }
+        },
     };
 }
 export const localStore = createStorage();
-export const sessionStore = createStorage('sessionStorage');
+export const sessionStore = createStorage("sessionStorage");

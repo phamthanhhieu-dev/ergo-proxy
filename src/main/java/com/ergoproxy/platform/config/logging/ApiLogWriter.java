@@ -2,13 +2,6 @@ package com.ergoproxy.platform.config.logging;
 
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.util.Messages;
-import java.net.URI;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,15 +10,17 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 
+import java.net.URI;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 @RequiredArgsConstructor
 public class ApiLogWriter {
-
-    @Value("${app.logging.api.max-body-size:16384}")
-    private int maxBodySize;
-
-    @Value("${app.logging.api.enabled:true}")
-    private boolean enabled;
 
     private static final Set<String> SECRETS = Set.of(
         Const.Common.PASSWORD,
@@ -44,6 +39,10 @@ public class ApiLogWriter {
     );
     private static final Pattern URL = Pattern.compile("https?://[^\\s\"<>]+", Pattern.CASE_INSENSITIVE);
     private final ObjectMapper objectMapper;
+    @Value("${app.logging.api.max-body-size:16384}")
+    private int maxBodySize;
+    @Value("${app.logging.api.enabled:true}")
+    private boolean enabled;
 
     public int limit() {
         int response = Math.max(1, Math.min(maxBodySize, 1024 * 1024));
@@ -128,7 +127,8 @@ public class ApiLogWriter {
                 try {
                     JsonNode response = mask(objectMapper.readTree(value));
                     return response;
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
             String safe = URL.matcher(value).replaceAll(match -> {
                 try {

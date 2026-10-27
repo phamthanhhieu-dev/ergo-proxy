@@ -2,18 +2,28 @@ package com.ergoproxy.platform.service;
 
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.exception.LogicException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AnimeSourceServiceImpl implements AnimeSourceService {
 
     private final List<AnimeProvider> providers;
+
+    @Override
+    public Map<String, String> embed(com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO request, String source) throws Exception {
+        AnimeProvider provider = resolve(source);
+        String url = provider.embedUrl(request);
+        Map<String, String> response = new LinkedHashMap<>();
+        response.put(Const.Common.EMBED_URL, url);
+        return response;
+    }
 
     @Override
     public AnimeProvider resolve(String source) {

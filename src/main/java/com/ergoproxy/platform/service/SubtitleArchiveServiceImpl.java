@@ -8,6 +8,15 @@ import com.ergoproxy.platform.dto.subtitle.SubtitleFileDTO;
 import com.ergoproxy.platform.exception.LogicException;
 import com.ergoproxy.platform.util.Messages;
 import com.ergoproxy.platform.util.SubtitleDiagnostics;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import tools.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,14 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor

@@ -1,7 +1,7 @@
-const VIDEO = new Set(['mkv', 'mp4', 'm4v', 'webm', 'mov', 'avi']);
-const SUBTITLE = new Set(['ass', 'ssa', 'srt', 'vtt']);
-const FONT = new Set(['ttf', 'otf', 'woff', 'woff2']);
-const extension = (name) => name.split('.').pop().toLowerCase();
+const VIDEO = new Set(["mkv", "mp4", "m4v", "webm", "mov", "avi"]);
+const SUBTITLE = new Set(["ass", "ssa", "srt", "vtt"]);
+const FONT = new Set(["ttf", "otf", "woff", "woff2"]);
+const extension = (name) => name.split(".").pop().toLowerCase();
 
 // Blob URLs reference the selected files; videos are never uploaded or copied into a cache.
 export class BrowserLibrary {
@@ -24,7 +24,9 @@ export class BrowserLibrary {
         const folders = new Map();
         for (const file of files) {
             const path = file.webkitRelativePath || file.name;
-            const directory = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
+            const directory = path.includes("/")
+                ? path.slice(0, path.lastIndexOf("/"))
+                : "";
             if (!folders.has(directory)) {
                 folders.set(directory, []);
             }
@@ -32,54 +34,66 @@ export class BrowserLibrary {
         }
         const videos = [];
         for (const [directory, siblings] of folders) {
-            const path = directory.split('/').filter(Boolean);
-            const folder = path.at(-1) || 'Video trên thiết bị';
+            const path = directory.split("/").filter(Boolean);
+            const folder = path.at(-1) || "Video trên thiết bị";
             const episodeFolder = /^EP\s*\d+$/i.test(folder);
             for (const file of siblings) {
                 if (!VIDEO.has(extension(file.name))) {
                     continue;
                 }
                 videos.push({
-                    series: episodeFolder ? path.at(-2) || 'Video trên thiết bị' : folder,
-                    episode: episodeFolder ? folder : file.name.replace(/\.[^.]+$/, ''),
+                    series: episodeFolder
+                        ? path.at(-2) || "Video trên thiết bị"
+                        : folder,
+                    episode: episodeFolder
+                        ? folder
+                        : file.name.replace(/\.[^.]+$/, ""),
                     video: this.describe(file),
                     subtitles: siblings
                         .filter((item) => SUBTITLE.has(extension(item.name)))
                         .map((item) => this.describe(item)),
-                    fonts: siblings.filter((item) => FONT.has(extension(item.name))).map((item) => this.describe(item))
+                    fonts: siblings
+                        .filter((item) => FONT.has(extension(item.name)))
+                        .map((item) => this.describe(item)),
                 });
             }
         }
         videos.sort((a, b) =>
-            (a.series + '/' + a.episode + '/' + a.video.name).localeCompare(
-                b.series + '/' + b.episode + '/' + b.video.name,
-                'vi',
-                { numeric: true }
-            )
+            (a.series + "/" + a.episode + "/" + a.video.name).localeCompare(
+                b.series + "/" + b.episode + "/" + b.video.name,
+                "vi",
+                { numeric: true },
+            ),
         );
         return {
             local: true,
-            name: files[0]?.webkitRelativePath?.split('/')[0] || 'Video trên thiết bị',
-            videos
+            name:
+                files[0]?.webkitRelativePath?.split("/")[0] ||
+                "Video trên thiết bị",
+            videos,
         };
     }
     choose(folder, onLibrary, onMessage) {
         this.input?.remove();
-        const input = document.createElement('input');
+        const input = document.createElement("input");
         this.input = input;
-        input.type = 'file';
+        input.type = "file";
         input.multiple = true;
         input.hidden = true;
         if (folder) {
             input.webkitdirectory = true;
         } else {
-            input.accept = [...VIDEO, ...SUBTITLE, ...FONT].map((value) => '.' + value).join(',');
+            input.accept = [...VIDEO, ...SUBTITLE, ...FONT]
+                .map((value) => "." + value)
+                .join(",");
         }
         input.onchange = () => {
             try {
                 const files = [...input.files];
                 if (!files.some((file) => VIDEO.has(extension(file.name)))) {
-                    onMessage('Chưa chọn video được hỗ trợ. Có thể chọn video và sub cùng lúc.');
+                    onMessage(
+                        "Chưa chọn video được hỗ trợ. Có thể chọn video và sub cùng lúc.",
+                    );
                     return;
                 }
                 // Release old URLs only after the player switches to the new library.

@@ -5,16 +5,17 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicBoolean;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 @Component
 @RequiredArgsConstructor
@@ -111,7 +112,7 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
                     }
 
                     public void write(int value) throws IOException {
-                        write(new byte[] { (byte) value }, 0, 1);
+                        write(new byte[]{(byte) value}, 0, 1);
                     }
 
                     public void write(byte[] bytes, int offset, int length) throws IOException {

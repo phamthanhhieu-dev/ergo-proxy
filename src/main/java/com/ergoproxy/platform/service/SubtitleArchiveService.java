@@ -1,10 +1,11 @@
 package com.ergoproxy.platform.service;
 
 import com.ergoproxy.platform.dto.subtitle.PreparedSubtitleArchiveDTO;
-import java.io.IOException;
-import java.io.OutputStream;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public interface SubtitleArchiveService {
     PreparedSubtitleArchiveDTO prepare(String payload) throws Exception;

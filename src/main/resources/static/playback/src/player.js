@@ -1,4 +1,4 @@
-import { fileUrl } from './api';
+import { fileUrl } from "./api";
 
 /** Truyền nguyên file từ ổ đĩa; giải mã video thuộc về trình duyệt. */
 export class VideoPlayer {
@@ -12,7 +12,7 @@ export class VideoPlayer {
         this.pictureVersion++;
         this.progress?.close();
         this.video.pause();
-        this.video.removeAttribute('src');
+        this.video.removeAttribute("src");
         this.video.load();
     }
     async restorePicture() {
@@ -27,7 +27,7 @@ export class VideoPlayer {
         const display = video.style.display;
         // Tear down the stale fullscreen compositor layer without replacing/reloading the source.
         video.pause();
-        video.style.display = 'none';
+        video.style.display = "none";
         void video.offsetHeight;
         await new Promise((resolve) => requestAnimationFrame(resolve));
         video.style.display = display;
@@ -42,7 +42,10 @@ export class VideoPlayer {
                 await video.play();
             }
         } catch (error) {
-            if (version === this.pictureVersion && error.name !== 'AbortError') {
+            if (
+                version === this.pictureVersion &&
+                error.name !== "AbortError"
+            ) {
                 this.report(error.message);
             }
         }
@@ -55,8 +58,8 @@ export class VideoPlayer {
         this.video.load();
         this.report(
             entry.video.url
-                ? 'Đang đọc video trên thiết bị • Không tải video lên server.'
-                : 'Đang đọc thư viện trên máy host • Hỗ trợ tua • Không chuyển mã video.'
+                ? "Đang đọc video trên thiết bị • Không tải video lên server."
+                : "Đang đọc thư viện trên máy host • Hỗ trợ tua • Không chuyển mã video.",
         );
     }
 }
