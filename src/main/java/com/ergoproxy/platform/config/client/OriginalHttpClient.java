@@ -1,6 +1,7 @@
 package com.ergoproxy.platform.config.client;
 
 import com.ergoproxy.platform.config.logging.ApiLogWriter;
+import com.ergoproxy.platform.constant.AnimeHost;
 import com.ergoproxy.platform.constant.Const;
 import com.ergoproxy.platform.exception.LogicException;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,14 @@ public class OriginalHttpClient {
 
     public static void validate(URI uri) {
         String host = String.valueOf(uri.getHost()).toLowerCase(Locale.ROOT);
+
         if (
             !Const.Common.HTTPS.equalsIgnoreCase(uri.getScheme()) ||
                 uri.getUserInfo() != null ||
                 (uri.getPort() != -1 && uri.getPort() != 443) ||
-                !(host.equals(Const.Common.REANIME_HOST) || host.equals(Const.Common.FLIXCLOUD_HOST) || fileHost(host))
+                !(AnimeHost.REANIME_HOST.contains(host) ||
+                    host.equals(Const.Common.FLIXCLOUD_HOST) ||
+                    fileHost(host))
         ) {
             throw new LogicException("VOHC_00001", "original.host.invalid", host);
         }
