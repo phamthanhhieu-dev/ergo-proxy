@@ -179,7 +179,6 @@ public final class Const {
         public static final String DOT = ".";
         public static final String SLASH = "/";
         public static final String FLIXCLOUD_HOST = "flixcloud.cc";
-        public static final String REANIME_HOST = "reanime.to";
         public static final String OPENSUBTITLES_HOST = "opensubtitles.com";
         public static final String OPENSUBTITLES_ORG_HOST = "opensubtitles.org";
 
