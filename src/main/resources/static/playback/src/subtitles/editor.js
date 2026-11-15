@@ -138,36 +138,42 @@ export class SubtitleEditor {
             return;
         }
         this.report("Đang tải phụ đề…");
+        console.log("[Subtitle] Start:", file.name);
+
         try {
             let bytes = file.bytes;
+
             if (!bytes) {
+                console.log("[Subtitle] Fetch:", file.url);
+
                 const response = await fetch(file.url, {
                     signal: this.controller.signal,
                 });
+
+                console.log("[Subtitle] Response:", response.status);
+
                 if (!response.ok) {
-                    throw new Error(
-                        "Không đọc được file phụ đề. Hãy chọn lại thư mục.",
-                    );
+                    throw new Error("Không đọc được file phụ đề.");
                 }
-                if (
-                    Number(response.headers.get("Content-Length") || 0) >
-                    MAX_SUBTITLE_BYTES
-                ) {
-                    throw new Error("Phụ đề vượt giới hạn 8 MB.");
-                }
+
                 bytes = new Uint8Array(await response.arrayBuffer());
+                console.log("[Subtitle] Bytes:", bytes.length);
             }
-            if (bytes.length > MAX_SUBTITLE_BYTES) {
-                throw new Error("Phụ đề vượt giới hạn 8 MB.");
-            }
-            if (version !== this.trackVersion) {
-                return;
-            }
+
+            if (version !== this.trackVersion) return;
+
+            console.log("[Subtitle] Renderer loading...");
+
             await this.renderer.load(bytes, file.name, this.fonts);
+
+            console.log("[Subtitle] Renderer loaded");
+
             if (version === this.trackVersion) {
                 this.report("Đang dùng: " + file.name);
             }
         } catch (error) {
+            console.error("[Subtitle] Error:", error);
+
             if (version === this.trackVersion && error.name !== "AbortError") {
                 this.report("Không hiển thị được phụ đề: " + error.message);
             }
