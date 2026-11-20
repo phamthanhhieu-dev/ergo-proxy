@@ -1,8 +1,8 @@
 package com.ergoproxy.platform.service;
 
-import com.ergoproxy.platform.config.client.OriginalHttpClient;
-import com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO;
-import com.ergoproxy.platform.dto.original.OriginalDownloadResponseDTO;
+import com.ergoproxy.platform.common.config.client.OriginalHttpClient;
+import com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.original.OriginalDownloadResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 

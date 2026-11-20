@@ -1,7 +1,7 @@
 package com.ergoproxy.platform.util;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.exception.LogicException;
+import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.common.exception.LogicException;
 
 import java.text.MessageFormat;
 import java.util.Locale;

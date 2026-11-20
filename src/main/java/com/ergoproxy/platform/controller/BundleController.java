@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.controller;
 
-import com.ergoproxy.platform.constant.Const;
+import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.service.EpisodeBundleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

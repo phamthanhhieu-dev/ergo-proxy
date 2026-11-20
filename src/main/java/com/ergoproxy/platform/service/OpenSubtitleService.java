@@ -1,8 +1,8 @@
 package com.ergoproxy.platform.service;
 
-import com.ergoproxy.platform.dto.subtitle.SubtitleDownloadRequestDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleFileDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleSearchResponseDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleDownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleFileDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleSearchResponseDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;

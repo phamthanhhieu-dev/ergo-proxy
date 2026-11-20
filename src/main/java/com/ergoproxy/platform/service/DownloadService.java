@@ -1,11 +1,11 @@
 package com.ergoproxy.platform.service;
 
-import com.ergoproxy.platform.dto.download.DownloadFileResponseDTO;
-import com.ergoproxy.platform.dto.download.DownloadRequestDTO;
-import com.ergoproxy.platform.dto.download.DownloadResponseDTO;
-import com.ergoproxy.platform.dto.download.DownloadVideoTargetResponseDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleFileDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleSaveRequestDTO;
+import com.ergoproxy.platform.model.dto.download.DownloadFileResponseDTO;
+import com.ergoproxy.platform.model.dto.download.DownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.download.DownloadResponseDTO;
+import com.ergoproxy.platform.model.dto.download.DownloadVideoTargetResponseDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleFileDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleSaveRequestDTO;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 

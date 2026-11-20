@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.service;
 
-import com.ergoproxy.platform.dto.bundle.PreparedEpisodeBundleDTO;
+import com.ergoproxy.platform.model.dto.bundle.PreparedEpisodeBundleDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 

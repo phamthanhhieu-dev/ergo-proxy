@@ -1,11 +1,11 @@
 package com.ergoproxy.platform.controller;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.dto.download.DownloadFileResponseDTO;
-import com.ergoproxy.platform.dto.download.DownloadVideoTargetResponseDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleDownloadRequestDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleSaveRequestDTO;
-import com.ergoproxy.platform.dto.subtitle.SubtitleSearchResponseDTO;
+import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.model.dto.download.DownloadFileResponseDTO;
+import com.ergoproxy.platform.model.dto.download.DownloadVideoTargetResponseDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleDownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleSaveRequestDTO;
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleSearchResponseDTO;
 import com.ergoproxy.platform.service.DownloadService;
 import com.ergoproxy.platform.service.OpenSubtitleService;
 import com.ergoproxy.platform.service.SubtitleArchiveService;

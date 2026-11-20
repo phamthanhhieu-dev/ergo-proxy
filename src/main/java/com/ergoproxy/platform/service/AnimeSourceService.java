@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AnimeSourceService {
-    Map<String, String> embed(com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO request, String source) throws Exception;
+    Map<String, String> embed(com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO request, String source) throws Exception;
 
     AnimeProvider resolve(String source);
 

@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.service;
 
-import com.ergoproxy.platform.dto.subtitle.PreparedSubtitleArchiveDTO;
+import com.ergoproxy.platform.model.dto.subtitle.PreparedSubtitleArchiveDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
