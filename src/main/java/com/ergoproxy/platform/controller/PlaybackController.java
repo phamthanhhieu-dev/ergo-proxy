@@ -13,31 +13,32 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(Const.Path.PLAYBACK)
+@RequestMapping(Const.Path.API + Const.Version.V1 + Const.Path.PLAYBACK)
 @RequiredArgsConstructor
 public class PlaybackController {
 
     private final PlaybackLibraryService libraryService;
     private final PlaybackMediaService mediaService;
 
-    @GetMapping("/library")
+    @GetMapping(Const.Path.LIBRARY)
     public LibrarySnapshotDTO library() {
-        LibrarySnapshotDTO response = libraryService.library();
+        var response = libraryService.library();
         return response;
     }
 
-    @GetMapping("/subtitles")
-    public java.util.List<SubtitleLibraryEntryDTO> scanSubtitleLibrary() {
-        java.util.List<SubtitleLibraryEntryDTO> response = libraryService.scanSubtitleLibrary();
+    @GetMapping(Const.Path.SUBTITLES)
+    public List<SubtitleLibraryEntryDTO> scanSubtitleLibrary() {
+        var response = libraryService.scanSubtitleLibrary();
         return response;
     }
 
-    @GetMapping("/files/{id}")
+    @GetMapping(Const.Path.FILES + "/{id}")
     public ResponseEntity<Resource> file(@PathVariable UUID id) {
-        ResponseEntity<Resource> response = mediaService.file(id);
+        var response = mediaService.file(id);
         return response;
     }
 }

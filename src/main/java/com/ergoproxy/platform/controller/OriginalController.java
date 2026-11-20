@@ -20,17 +20,14 @@ public class OriginalController {
     private final OriginalDownloadService originalDownloadService;
 
     @PostMapping
-    public OriginalDownloadResponseDTO prepare(
-        @Valid @RequestBody OriginalDownloadRequestDTO request,
-        @RequestParam(defaultValue = Const.Common.REANIME) String source
-    ) throws Exception {
-        OriginalDownloadResponseDTO response = originalDownloadService.prepare(request, source);
+    public OriginalDownloadResponseDTO prepare(@Valid @RequestBody OriginalDownloadRequestDTO request, @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
+        var response = originalDownloadService.prepare(request, source);
         return response;
     }
 
     @GetMapping("/{id}")
     public OriginalDownloadResponseDTO status(@PathVariable UUID id) {
-        OriginalDownloadResponseDTO response = originalDownloadService.status(id);
+        var response = originalDownloadService.status(id);
         return response;
     }
 
@@ -39,9 +36,9 @@ public class OriginalController {
         originalDownloadService.cancel(id);
     }
 
-    @GetMapping("/{id}/content")
+    @GetMapping("/{id}" + Const.Path.CONTENT)
     public ResponseEntity<StreamingResponseBody> content(@PathVariable UUID id) throws Exception {
-        ResponseEntity<StreamingResponseBody> response = originalDownloadService.downloadContent(id);
+        var response = originalDownloadService.downloadContent(id);
         return response;
     }
 }

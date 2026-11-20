@@ -28,37 +28,37 @@ public class SubtitleController {
     private final SubtitleArchiveService subtitleArchiveService;
     private final DownloadService downloadService;
 
-    @PostMapping(value = "/native", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(value = Const.Path.NATIVE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<byte[]> nativeDownload(@RequestParam long fileId) {
-        ResponseEntity<byte[]> response = openSubtitleService.nativeDownload(fileId);
+        var response = openSubtitleService.nativeDownload(fileId);
         return response;
     }
 
     @PostMapping(value = Const.Path.NATIVE_ARCHIVE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<StreamingResponseBody> nativeArchive(@RequestParam String payload) throws Exception {
-        ResponseEntity<StreamingResponseBody> response = subtitleArchiveService.downloadArchive(payload);
+        var response = subtitleArchiveService.downloadArchive(payload);
         return response;
     }
 
-    @GetMapping("/videos")
+    @GetMapping(Const.Path.VIDEOS)
     public List<DownloadVideoTargetResponseDTO> videos(@RequestParam String slug) {
-        List<DownloadVideoTargetResponseDTO> response = downloadService.videoTargets(slug);
+        var response = downloadService.videoTargets(slug);
         return response;
     }
 
-    @PostMapping("/save")
+    @PostMapping(Const.Path.SAVE)
     public DownloadFileResponseDTO save(@Valid @RequestBody SubtitleSaveRequestDTO request) throws Exception {
         DownloadFileResponseDTO response = downloadService.saveSubtitle(request);
         return response;
     }
 
-    @GetMapping("/configuration")
+    @GetMapping(Const.Path.CONFIGURATION)
     public Map<String, Boolean> configuration() {
         Map<String, Boolean> response = openSubtitleService.configuration();
         return response;
     }
 
-    @GetMapping("/search")
+    @GetMapping(Const.Path.SEARCH)
     public SubtitleSearchResponseDTO search(
         @RequestParam String q,
         @RequestParam(defaultValue = Const.Common.VI) String language,
@@ -72,7 +72,7 @@ public class SubtitleController {
         return response;
     }
 
-    @PostMapping("/download")
+    @PostMapping(Const.Path.DOWNLOAD)
     public ResponseEntity<byte[]> download(@Valid @RequestBody SubtitleDownloadRequestDTO request) {
         ResponseEntity<byte[]> response = openSubtitleService.downloadResponse(request);
         return response;

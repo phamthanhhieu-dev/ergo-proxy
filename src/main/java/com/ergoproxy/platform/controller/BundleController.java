@@ -18,10 +18,9 @@ public class BundleController {
 
     private final EpisodeBundleService episodeBundleService;
 
-    @PostMapping(value = "/native", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<StreamingResponseBody> download(@RequestParam String payload, @RequestParam(defaultValue = Const.Common.REANIME) String source)
-        throws Exception {
-        ResponseEntity<StreamingResponseBody> response = episodeBundleService.download(payload, source);
+    @PostMapping(value = Const.Path.NATIVE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<StreamingResponseBody> download(@RequestParam String payload, @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
+        var response = episodeBundleService.download(payload, source);
         return response;
     }
 }

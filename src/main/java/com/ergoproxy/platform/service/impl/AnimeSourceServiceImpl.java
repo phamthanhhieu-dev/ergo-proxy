@@ -2,10 +2,12 @@ package com.ergoproxy.platform.service.impl;
 
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.common.exception.LogicException;
+import com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO;
 import com.ergoproxy.platform.service.AnimeProvider;
 import com.ergoproxy.platform.service.AnimeSourceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,7 +21,7 @@ public class AnimeSourceServiceImpl implements AnimeSourceService {
     private final List<AnimeProvider> providers;
 
     @Override
-    public Map<String, String> embed(com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO request, String source) throws Exception {
+    public Map<String, String> embed(OriginalDownloadRequestDTO request, String source) throws Exception {
         AnimeProvider provider = resolve(source);
         String url = provider.embedUrl(request);
         Map<String, String> response = new LinkedHashMap<>();
@@ -51,16 +53,16 @@ public class AnimeSourceServiceImpl implements AnimeSourceService {
     }
 
     @Override
-    public tools.jackson.databind.JsonNode search(String query, String source) throws Exception {
+    public JsonNode search(String query, String source) throws Exception {
         AnimeProvider provider = resolve(source);
-        tools.jackson.databind.JsonNode response = provider.search(query);
+        JsonNode response = provider.search(query);
         return response;
     }
 
     @Override
-    public tools.jackson.databind.JsonNode episodes(String slug, String source) throws Exception {
+    public JsonNode episodes(String slug, String source) throws Exception {
         AnimeProvider provider = resolve(source);
-        tools.jackson.databind.JsonNode response = provider.episodes(slug);
+        JsonNode response = provider.episodes(slug);
         return response;
     }
 }
