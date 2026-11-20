@@ -302,21 +302,31 @@ public final class Const {
 
     public static final class Path {
 
-        public static final String OPENSUBTITLES_SEARCH = "/subtitles";
-        public static final String EMBED = "/e/";
+        public static final String SUBTITLES = "/subtitles";
+        public static final String E = "/e/";
         public static final String DOWNLOAD_PAGE = "/d/";
         public static final String ANIME = "/anime/";
         public static final String FLIX = "/flix/";
         public static final String LOGIN = "/login";
         public static final String DOWNLOAD = "/download";
+        public static final String DOWNLOADS = "/downloads";
         public static final String PROGRESS = "/progress";
         public static final String PAGE_DATA = "/__data.json";
         public static final String API = "/api";
-        public static final String PLAYBACK = Path.API + Version.V1 + "/playback";
+        public static final String PLAYBACK = "/playback";
         public static final String ORIGINAL = "/original";
         public static final String SUBTITLE = "/subtitle";
         public static final String BUNDLE = "/bundle";
         public static final String SEARCH = "/search";
+        public static final String SOURCES = "/sources";
+        public static final String EPISODES = "/episodes";
+        public static final String EMBED = "/embed";
+        public static final String FILES = "/files";
+        public static final String CONTENT = "/content";
+        public static final String LIBRARY = "/library";
+        public static final String VIDEOS = "/videos";
+        public static final String SAVE = "/save";
+        public static final String CONFIGURATION = "/configuration";
         public static final String NATIVE = "/native";
         public static final String NATIVE_ARCHIVE = "/native-archive";
 

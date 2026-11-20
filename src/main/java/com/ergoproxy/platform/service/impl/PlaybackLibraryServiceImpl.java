@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Service
 @lombok.RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class PlaybackLibraryServiceImpl implements PlaybackLibraryService {
             Set<Path> directories = new HashSet<>();
             List<SubtitleLibraryEntryDTO> response = new ArrayList<>();
             int count = 0;
-            try (java.util.stream.Stream<Path> entries = Files.walk(base, 7)) {
+            try (Stream<Path> entries = Files.walk(base, 7)) {
                 Iterator<Path> iterator = entries.iterator();
                 while (iterator.hasNext()) {
                     Path path = iterator.next();

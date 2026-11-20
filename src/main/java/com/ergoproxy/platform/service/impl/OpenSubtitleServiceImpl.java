@@ -256,7 +256,7 @@ public class OpenSubtitleServiceImpl implements OpenSubtitleService {
     }
 
     private URI createSearchUri(String query, String language, int season, int episode, String imdb, boolean movie, int page) {
-        String endpoint = apiUrl() + Const.Path.OPENSUBTITLES_SEARCH;
+        String endpoint = apiUrl() + Const.Path.SUBTITLES;
         String featureType = Const.Common.EPISODE;
         if (movie) {
             featureType = Const.Common.MOVIE;

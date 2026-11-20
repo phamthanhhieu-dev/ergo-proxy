@@ -25,48 +25,47 @@ public class AnimeController {
     private final AnimeSourceService animeSourceService;
     private final DownloadService downloadService;
 
-    @GetMapping("/sources")
+    @GetMapping(Const.Path.SOURCES)
     public List<Map<String, String>> sources() {
-        List<Map<String, String>> response = animeSourceService.sources();
+        var response = animeSourceService.sources();
         return response;
     }
 
     @GetMapping(Const.Path.SEARCH)
     public JsonNode search(@RequestParam String q, @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
-        JsonNode response = animeSourceService.search(q, source);
+        var response = animeSourceService.search(q, source);
         return response;
     }
 
-    @GetMapping("/anime/{slug}/episodes")
+    @GetMapping("{slug}" +  Const.Path.EPISODES)
     public JsonNode episodes(@PathVariable String slug, @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
-        JsonNode response = animeSourceService.episodes(slug, source);
+        var response = animeSourceService.episodes(slug, source);
         return response;
     }
 
-    @PostMapping("/embed")
+    @PostMapping(Const.Path.EMBED)
     public Map<String, String> embed(@Valid @RequestBody com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO request,
                                      @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
-        Map<String, String> response = animeSourceService.embed(request, source);
+        var response = animeSourceService.embed(request, source);
         return response;
     }
 
-    @PostMapping("/downloads")
+    @PostMapping(Const.Path.DOWNLOADS)
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public DownloadResponseDTO create(@Valid @RequestBody DownloadRequestDTO request, @RequestParam(defaultValue = Const.Common.REANIME) String source)
-        throws Exception {
-        DownloadResponseDTO response = downloadService.create(request, source);
+    public DownloadResponseDTO create(@Valid @RequestBody DownloadRequestDTO request, @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
+        var response = downloadService.create(request, source);
         return response;
     }
 
-    @GetMapping("/downloads/{id}")
+    @GetMapping(Const.Path.DOWNLOADS + "/{id}")
     public DownloadResponseDTO status(@PathVariable UUID id) throws Exception {
-        DownloadResponseDTO response = downloadService.get(id);
+        var response = downloadService.get(id);
         return response;
     }
 
-    @GetMapping("/downloads/{id}/files/{fileId}")
+    @GetMapping(Const.Path.DOWNLOADS + "/{id}" + Const.Path.FILES + "/{fileId}")
     public ResponseEntity<FileSystemResource> file(@PathVariable UUID id, @PathVariable String fileId) throws Exception {
-        ResponseEntity<FileSystemResource> response = downloadService.downloadFile(id, fileId);
+        var response = downloadService.downloadFile(id, fileId);
         return response;
     }
 }

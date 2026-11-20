@@ -283,7 +283,7 @@ public class ReanimeServiceImpl implements ReanimeService {
         if (!Const.Common.FLIXCLOUD_HOST.equals(embed.getHost()) || !embed.getPath().matches(Const.Regex.FLIXCLOUD_EMBED_PATH)) {
             throw new LogicException("DPR_00001", "original.player.link.invalid");
         }
-        String path = embed.getPath().replaceFirst(Const.Path.EMBED, Const.Path.DOWNLOAD_PAGE);
+        String path = embed.getPath().replaceFirst(Const.Path.E, Const.Path.DOWNLOAD_PAGE);
         String response = flixcloudApiUrl + path.replaceAll(Const.Regex.TRAILING_SLASH, Const.Common.EMPTY);
         return response;
     }
