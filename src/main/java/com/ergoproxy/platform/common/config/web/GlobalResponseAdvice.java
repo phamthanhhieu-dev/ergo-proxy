@@ -1,8 +1,8 @@
 package com.ergoproxy.platform.common.config.web;
 
 import com.ergoproxy.platform.ErgoProxyApplication;
-import com.ergoproxy.platform.model.dto.GlobalApiResponse;
 import com.ergoproxy.platform.common.exception.LogicException;
+import com.ergoproxy.platform.model.dto.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.Resource;

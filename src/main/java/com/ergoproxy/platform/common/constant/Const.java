@@ -1,10 +1,6 @@
 package com.ergoproxy.platform.common.constant;
 
 public final class Const {
-
-    private Const() {
-    }
-
     public static final class Subtitle {
 
         public static final int CONTENT_INSPECTION_LIMIT = 16384;
@@ -48,9 +44,6 @@ public final class Const {
         public static final String VTT_HEADER = "WEBVTT";
         public static final String COM_SUBDOMAIN_SUFFIX = ".opensubtitles.com";
         public static final String ORG_SUBDOMAIN_SUFFIX = ".opensubtitles.org";
-
-        private Subtitle() {
-        }
     }
 
     public static final class File {
@@ -66,9 +59,6 @@ public final class Const {
         public static final String SUBTITLE_REPORT = "SUBTITLE-REPORT.txt";
         public static final String DEFAULT_SUBTITLE_FILENAME = "subtitle.txt";
         public static final String SUBTITLE_ERROR_LABEL = " sub: ";
-
-        private File() {
-        }
     }
 
     public static final class Environment {
@@ -78,9 +68,6 @@ public final class Const {
         public static final String FLIXCLOUD_API_URL = "FLIXCLOUD_API_URL";
         public static final String API_LOG_ENABLED = "ERGO_API_LOG_ENABLED";
         public static final String API_LOG_LIMIT = "ERGO_API_LOG_LIMIT";
-
-        private Environment() {
-        }
     }
 
     public static final class Python {
@@ -103,9 +90,6 @@ public final class Const {
         public static final int SUCCESS_EXIT_CODE = 0;
         public static final java.time.Duration JSON_TIMEOUT = java.time.Duration.ofMinutes(3);
         public static final java.time.Duration DOWNLOAD_TIMEOUT = java.time.Duration.ofHours(2);
-
-        private Python() {
-        }
     }
 
     public static final class Regex {
@@ -131,9 +115,6 @@ public final class Const {
         public static final String TRAILING_SLASH = "/$";
         public static final String ANIME_SLUG = "[a-zA-Z0-9-]{1,180}";
         public static final String FLIXCLOUD_EMBED_PATH = "/e/[a-zA-Z0-9_-]+/?";
-
-        private Regex() {
-        }
     }
 
     public static final class Common {
@@ -153,7 +134,6 @@ public final class Const {
         public static final String QUERY_TOKEN_PREFIX = "?token=";
         public static final String SSE_DATA_PREFIX = "data:";
 
-        public static final String REANIME_NAME = "ReAnime";
         public static final String SPACE = " ";
         public static final String NEWLINE = "\n";
         public static final String SOFTSUB_PREFIX = "s-";
@@ -276,61 +256,29 @@ public final class Const {
         public static final String MKV_EXTENSION = ".mkv";
         public static final String SRT_EXTENSION = ".srt";
         public static final String ZIP_EXTENSION = ".zip";
-
-        private Common() {
-        }
     }
 
     public static final class Version {
-
         public static final String V1 = "/v1";
-
-        private Version() {
-        }
-    }
-
-    public static final class Playback {
-
-        public static final java.util.Set<String> VIDEO_EXTENSIONS = java.util.Set.of("mp4", "m4v", "mkv", "webm", "mov", "avi", "ts");
-        public static final java.util.Set<String> SUBTITLE_EXTENSIONS = java.util.Set.of(Common.ASS, Common.SSA, Common.SRT, Common.VTT);
-        public static final java.util.Set<String> FONT_EXTENSIONS = java.util.Set.of("ttf", "otf", "woff", "woff2");
-        public static final String EPISODE_PATTERN = "(?i)^EP(?:ISODE)?[ _-]*(\\d+)$";
-
-        private Playback() {
-        }
     }
 
     public static final class Path {
 
-        public static final String SUBTITLES = "/subtitles";
-        public static final String E = "/e/";
-        public static final String DOWNLOAD_PAGE = "/d/";
-        public static final String ANIME = "/anime/";
-        public static final String FLIX = "/flix/";
-        public static final String LOGIN = "/login";
-        public static final String DOWNLOAD = "/download";
-        public static final String DOWNLOADS = "/downloads";
-        public static final String PROGRESS = "/progress";
-        public static final String PAGE_DATA = "/__data.json";
         public static final String API = "/api";
-        public static final String PLAYBACK = "/playback";
-        public static final String ORIGINAL = "/original";
+        public static final String VIDEO = "/video";
         public static final String SUBTITLE = "/subtitle";
-        public static final String BUNDLE = "/bundle";
         public static final String SEARCH = "/search";
-        public static final String SOURCES = "/sources";
-        public static final String EPISODES = "/episodes";
-        public static final String EMBED = "/embed";
-        public static final String FILES = "/files";
-        public static final String CONTENT = "/content";
-        public static final String LIBRARY = "/library";
-        public static final String VIDEOS = "/videos";
-        public static final String SAVE = "/save";
-        public static final String CONFIGURATION = "/configuration";
-        public static final String NATIVE = "/native";
+        public static final String GET_EMBED_URL = "/get-embed-url";
         public static final String NATIVE_ARCHIVE = "/native-archive";
+    }
 
-        private Path() {
-        }
+    public static final class Source {
+        //subtitle
+        public static final String OPEN_SUBTITLE = "open_subtitle";
+        //website
+        public static final String REANIME = "reanime";
+        public static final String ANIMEVSUB = "animevsub";
+        //host
+        public static final String FLIX_CLOUD = "flix_cloud";
     }
 }
