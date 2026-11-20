@@ -1,8 +1,8 @@
 package com.ergoproxy.platform.controller;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO;
-import com.ergoproxy.platform.dto.original.OriginalDownloadResponseDTO;
+import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.original.OriginalDownloadResponseDTO;
 import com.ergoproxy.platform.service.OriginalDownloadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

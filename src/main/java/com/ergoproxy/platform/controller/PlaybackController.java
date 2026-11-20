@@ -1,8 +1,8 @@
 package com.ergoproxy.platform.controller;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.dto.playback.LibrarySnapshotDTO;
-import com.ergoproxy.platform.dto.playback.SubtitleLibraryEntryDTO;
+import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.model.dto.playback.LibrarySnapshotDTO;
+import com.ergoproxy.platform.model.dto.playback.SubtitleLibraryEntryDTO;
 import com.ergoproxy.platform.service.PlaybackLibraryService;
 import com.ergoproxy.platform.service.PlaybackMediaService;
 import lombok.RequiredArgsConstructor;

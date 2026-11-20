@@ -1,8 +1,8 @@
 package com.ergoproxy.platform.controller;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.dto.download.DownloadRequestDTO;
-import com.ergoproxy.platform.dto.download.DownloadResponseDTO;
+import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.model.dto.download.DownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.download.DownloadResponseDTO;
 import com.ergoproxy.platform.service.AnimeSourceService;
 import com.ergoproxy.platform.service.DownloadService;
 import jakarta.validation.Valid;
@@ -44,7 +44,7 @@ public class AnimeController {
     }
 
     @PostMapping("/embed")
-    public Map<String, String> embed(@Valid @RequestBody com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO request,
+    public Map<String, String> embed(@Valid @RequestBody com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO request,
                                      @RequestParam(defaultValue = Const.Common.REANIME) String source) throws Exception {
         Map<String, String> response = animeSourceService.embed(request, source);
         return response;

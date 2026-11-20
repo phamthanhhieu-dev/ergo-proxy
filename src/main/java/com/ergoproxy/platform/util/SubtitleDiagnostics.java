@@ -1,7 +1,7 @@
 package com.ergoproxy.platform.util;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.exception.LogicException;
+import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.common.exception.LogicException;
 import org.slf4j.MDC;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.client.RestClientResponseException;

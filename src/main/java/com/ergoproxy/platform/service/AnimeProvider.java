@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.service;
 
-import com.ergoproxy.platform.dto.original.OriginalDownloadRequestDTO;
+import com.ergoproxy.platform.model.dto.original.OriginalDownloadRequestDTO;
 import tools.jackson.databind.JsonNode;
 
 import java.nio.file.Path;
