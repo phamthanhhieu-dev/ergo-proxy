@@ -1,5 +1,6 @@
 package com.ergoproxy.platform.service.video;
 
+import com.ergoproxy.platform.common.exception.LogicException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,9 @@ public class VideoServiceImpl implements VideoService {
 
     private VideoRouter getSource(String source) {
         VideoRouter contract = animeSources.get(source);
+        if (contract == null) {
+            throw new LogicException("GSV_00002", "video.source.unsupported");
+        }
         return contract;
     }
 

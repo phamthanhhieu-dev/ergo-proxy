@@ -1,17 +1,26 @@
 package com.ergoproxy.platform.common.config.client;
 
 import com.ergoproxy.platform.common.config.configmapping.ReanimeCfg;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import com.ergoproxy.platform.common.config.logging.HttpLoggingInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-@Configuration
-@EnableConfigurationProperties(ReanimeCfg.class)
+@Component
 public class ReanimeConfiguration {
 
-    @Bean
-    public RestClient reanimeRestClient(RestClient.Builder builder, ReanimeCfg properties) {
-        return builder.baseUrl(properties.getReanimeApiUrl()).build();
+    private final RestClient restClient;
+
+    public ReanimeConfiguration(ReanimeCfg reanimeCfg, HttpLoggingInterceptor httpLoggingInterceptor) {
+        RestClient client = RestClient.builder()
+            .baseUrl(reanimeCfg.getReanimeApiUrl())
+            .requestInterceptor(httpLoggingInterceptor)
+            .build();
+        this.restClient = client;
+    }
+
+    public RestClient.RequestHeadersUriSpec<?> get() {
+        return restClient.get();
     }
 }

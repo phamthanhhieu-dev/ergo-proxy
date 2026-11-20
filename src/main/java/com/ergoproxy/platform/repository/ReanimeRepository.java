@@ -1,5 +1,6 @@
 package com.ergoproxy.platform.repository;
 
+import com.ergoproxy.platform.common.config.client.ReanimeConfiguration;
 import com.ergoproxy.platform.common.config.configmapping.ReanimeCfg;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchResponseDTO;
@@ -14,11 +15,11 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class ReanimeRepository {
 
-    private final RestClient reanimeRestClient;
+    private final ReanimeConfiguration reanimeConfiguration;
     private final ReanimeCfg reanimeCfg;
 
     public ReanimeSearchResponseDTO search(ReanimeSearchRequestDTO request) {
-        return reanimeRestClient.get()
+        return reanimeConfiguration.get()
             .uri(uriBuilder -> buildSearchUri(uriBuilder, request))
             .retrieve()
             .body(ReanimeSearchResponseDTO.class);
