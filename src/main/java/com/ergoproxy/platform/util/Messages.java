@@ -31,17 +31,4 @@ public final class Messages {
         String response = formatter.format(values);
         return response;
     }
-
-    public static String fromException(Throwable exception) {
-        String response;
-        if (exception instanceof LogicException error) {
-            response = get(error.getMessageKey(), error.getArgs());
-        } else {
-            response = SubtitleDiagnostics.sanitize(exception.getMessage());
-            if (response.isBlank()) {
-                response = get("request.process.failed");
-            }
-        }
-        return response;
-    }
 }

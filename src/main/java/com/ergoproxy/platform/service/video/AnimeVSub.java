@@ -1,7 +1,7 @@
 package com.ergoproxy.platform.service.video;
 
 import com.ergoproxy.platform.common.constant.Const;
-import com.ergoproxy.platform.model.dto.VideoDTO;
+import com.ergoproxy.platform.model.dto.video.VideoDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

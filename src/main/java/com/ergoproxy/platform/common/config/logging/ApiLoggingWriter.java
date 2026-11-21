@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
-public class ApiLogWriter {
+public class ApiLoggingWriter {
 
     private static final Set<String> SECRETS = Set.of(
         Const.Common.PASSWORD,

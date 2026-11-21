@@ -21,32 +21,32 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class ApiLoggingFilter extends OncePerRequestFilter {
 
-    private final ApiLogWriter apiLogWriter;
+    private final ApiLoggingWriter apiLoggingWriter;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        boolean response = !apiLogWriter.enabled() || !request.getRequestURI().startsWith(request.getContextPath() + "/api/");
+        boolean response = !apiLoggingWriter.enabled() || !request.getRequestURI().startsWith(request.getContextPath() + "/api/");
         return response;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         long started = System.nanoTime();
-        ContentCachingRequestWrapper input = new ContentCachingRequestWrapper(request, apiLogWriter.limit());
-        LoggedResponse output = new LoggedResponse(response, apiLogWriter.limit());
+        ContentCachingRequestWrapper input = new ContentCachingRequestWrapper(request, apiLoggingWriter.limit());
+        LoggedResponse output = new LoggedResponse(response, apiLoggingWriter.limit());
         AtomicBoolean logged = new AtomicBoolean();
         // Forms are small metadata requests; never read video/ZIP content to log it.
-        String parameters = apiLogWriter.parameters(input.getParameterMap());
+        String parameters = apiLoggingWriter.parameters(input.getParameterMap());
         Runnable finish = () -> {
             if (!logged.compareAndSet(false, true)) {
                 return;
             }
             String requestLog =
                 input.getContentType() != null && input.getContentType().contains(Const.Common.JSON)
-                    ? apiLogWriter.body(input.getContentAsByteArray(), input.getContentType(), false)
+                    ? apiLoggingWriter.body(input.getContentAsByteArray(), input.getContentType(), false)
                     : parameters;
-            String responseLog = output.getStatus() + " " + apiLogWriter.body(output.prefix.toByteArray(), output.getContentType(), output.truncated);
-            apiLogWriter.write(URI.create(request.getRequestURL().toString()), request.getMethod(), requestLog, responseLog, started);
+            String responseLog = output.getStatus() + " " + apiLoggingWriter.body(output.prefix.toByteArray(), output.getContentType(), output.truncated);
+            apiLoggingWriter.write(URI.create(request.getRequestURL().toString()), request.getMethod(), requestLog, responseLog, started);
         };
         try {
             chain.doFilter(input, output);

@@ -10,11 +10,11 @@ import java.net.HttpURLConnection;
 import java.time.Duration;
 
 @Component
-public class OpenSubtitleHttpClient {
+public class OpenSubtitleConfiguration {
 
     private final RestClient restClient;
 
-    public OpenSubtitleHttpClient(HttpLoggingInterceptor httpLoggingInterceptor) {
+    public OpenSubtitleConfiguration(HttpLoggingInterceptor httpLoggingInterceptor) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory() {
             @Override
             protected void prepareConnection(HttpURLConnection connection, String method) throws IOException {

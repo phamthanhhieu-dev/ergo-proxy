@@ -25,11 +25,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class HttpLoggingInterceptor implements ClientHttpRequestInterceptor {
 
-    private final ApiLogWriter apiLogWriter;
+    private final ApiLoggingWriter apiLoggingWriter;
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        if (!apiLogWriter.enabled()) {
+        if (!apiLoggingWriter.enabled()) {
             ClientHttpResponse result = execution.execute(request, body);
             return result;
         }
@@ -41,12 +41,12 @@ public class HttpLoggingInterceptor implements ClientHttpRequestInterceptor {
             parameters.put(entry.getKey(), values);
         }
         String requestLog =
-            body.length == 0 ? apiLogWriter.parameters(parameters) : apiLogWriter.body(body, String.valueOf(request.getHeaders().getContentType()), false);
+            body.length == 0 ? apiLoggingWriter.parameters(parameters) : apiLoggingWriter.body(body, String.valueOf(request.getHeaders().getContentType()), false);
         ClientHttpResponse response;
         try {
             response = execution.execute(request, body);
         } catch (IOException | RuntimeException exception) {
-            apiLogWriter.write(request.getURI(), request.getMethod().name(), requestLog, exception.getClass().getSimpleName(), started);
+            apiLoggingWriter.write(request.getURI(), request.getMethod().name(), requestLog, exception.getClass().getSimpleName(), started);
             if (exception instanceof LogicException existingLogicException) {
                 throw existingLogicException;
             }
@@ -56,12 +56,12 @@ public class HttpLoggingInterceptor implements ClientHttpRequestInterceptor {
             String contentType = String.valueOf(response.getHeaders().getContentType());
             boolean json = contentType.contains(Const.Common.JSON);
             InputStream original = json ? response.getBody() : null;
-            byte[] prefix = json ? original.readNBytes(apiLogWriter.limit() + 1) : new byte[0];
-            apiLogWriter.write(
+            byte[] prefix = json ? original.readNBytes(apiLoggingWriter.limit() + 1) : new byte[0];
+            apiLoggingWriter.write(
                 request.getURI(),
                 request.getMethod().name(),
                 requestLog,
-                response.getStatusCode().value() + " " + apiLogWriter.body(prefix, contentType, false),
+                response.getStatusCode().value() + " " + apiLoggingWriter.body(prefix, contentType, false),
                 started
             );
             if (!json) {
@@ -101,7 +101,7 @@ public class HttpLoggingInterceptor implements ClientHttpRequestInterceptor {
             return returnValue;
         } catch (IOException | RuntimeException exception) {
             response.close();
-            apiLogWriter.write(request.getURI(), request.getMethod().name(), requestLog, exception.getClass().getSimpleName(), started);
+            apiLoggingWriter.write(request.getURI(), request.getMethod().name(), requestLog, exception.getClass().getSimpleName(), started);
             if (exception instanceof LogicException existingLogicException) {
                 throw existingLogicException;
             }

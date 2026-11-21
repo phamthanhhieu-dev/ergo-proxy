@@ -269,6 +269,7 @@ public final class Const {
         public static final String SUBTITLE = "/subtitle";
         public static final String SEARCH = "/search";
         public static final String GET_EMBED_URL = "/get-embed-url";
+        public static final String ANIME = "/anime";
         public static final String NATIVE_ARCHIVE = "/native-archive";
     }
 
