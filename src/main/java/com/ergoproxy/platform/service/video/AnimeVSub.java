@@ -1,7 +1,8 @@
 package com.ergoproxy.platform.service.video;
 
 import com.ergoproxy.platform.common.constant.Const;
-import com.ergoproxy.platform.model.dto.video.VideoDTO;
+import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
+import com.ergoproxy.platform.model.dto.video.VideoResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,8 @@ public class AnimeVSub implements VideoRouter {
     }
 
     @Override
-    public List<VideoDTO> search(String query) {
-        List<VideoDTO> response = new ArrayList<>();
+    public List<VideoResponseDTO> search(SearchRequestDTO searchRequestDTO) {
+        List<VideoResponseDTO> response = new ArrayList<>();
         return response;
     }
 }

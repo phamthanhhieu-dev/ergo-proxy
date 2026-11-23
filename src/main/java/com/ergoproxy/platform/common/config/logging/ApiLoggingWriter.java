@@ -1,5 +1,7 @@
 package com.ergoproxy.platform.common.config.logging;
 
+import com.ergoproxy.platform.common.config.configmapping.LogProperties;
+import com.ergoproxy.platform.common.config.configmapping.OpenSubtitleProperties;
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.util.Messages;
 import lombok.RequiredArgsConstructor;
@@ -37,25 +39,25 @@ public class ApiLoggingWriter {
         "privatekey",
         Const.Common.USERNAME
     );
-    private static final Pattern URL = Pattern.compile("https?://[^\\s\"<>]+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern URL = Pattern.compile(Const.Regex.DIAGNOSTIC_URL, Pattern.CASE_INSENSITIVE);
     private final ObjectMapper objectMapper;
-    @Value("${app.logging.api.max-body-size:16384}")
-    private int maxBodySize;
-    @Value("${app.logging.api.enabled:true}")
-    private boolean enabled;
+    private final LogProperties logProperties;
+    private static final Pattern SECRET_VALUE = Pattern.compile(
+        "(?i)(\"(?:password|passwordhash|token|access[-_]?token|refresh[-_]?token|authorization|api[-_]?key|secret|cookie|configuredtoken|credentialref|privatekey|username)\"\\s*:\\s*)\"(?:\\\\.|[^\"\\\\])*(?:\"|$)"
+    );
 
     public int limit() {
-        int response = Math.max(1, Math.min(maxBodySize, 1024 * 1024));
+        int response = Math.max(1, Math.min(logProperties.getApiMaxBodySize(), 1024 * 1024));
         return response;
     }
 
     public boolean enabled() {
-        boolean response = enabled;
+        boolean response = logProperties.getApiEnabled();
         return response;
     }
 
     public void write(URI uri, String method, String request, String response, long started) {
-        if (!enabled) {
+        if (!logProperties.getApiEnabled()) {
             return;
         }
         try {
@@ -75,23 +77,34 @@ public class ApiLoggingWriter {
 
     public String body(byte[] bytes, String contentType, boolean truncated) {
         if (contentType == null || !contentType.toLowerCase(Locale.ROOT).contains(Const.Common.JSON)) {
-            String response = Messages.get("api.log.body.omitted");
-            return response;
+            return Messages.get("api.log.body.omitted");
         }
-        if (truncated || bytes.length > limit()) {
-            String response = Messages.get("api.log.body.too.large");
-            return response;
-        }
+
         if (bytes.length == 0) {
-            String response = "{}";
-            return response;
+            return "{}";
         }
+
+        int length = Math.min(bytes.length, limit());
+        boolean partial = truncated || bytes.length > limit();
+
+        if (partial) {
+            String response = new String(bytes, 0, length, java.nio.charset.StandardCharsets.UTF_8);
+            response = SECRET_VALUE.matcher(response).replaceAll("$1\"***\"");
+            response = response.replaceAll("(?i)bearer\\s+[^\\s,;]+", "Bearer ***");
+            response = URL.matcher(response).replaceAll(match -> {
+                try {
+                    return Matcher.quoteReplacement(safeUrl(URI.create(match.group())));
+                } catch (RuntimeException ignored) {
+                    return "***";
+                }
+            });
+            return response + " ... [TRUNCATED]";
+        }
+
         try {
-            String response = objectMapper.writeValueAsString(mask(objectMapper.readTree(bytes)));
-            return response;
+            return objectMapper.writeValueAsString(mask(objectMapper.readTree(bytes)));
         } catch (Exception ignored) {
-            String response = Messages.get("api.log.body.json.invalid");
-            return response;
+            return Messages.get("api.log.body.json.invalid");
         }
     }
 
@@ -149,5 +162,31 @@ public class ApiLoggingWriter {
     private String safeUrl(URI uri) {
         String response = uri.getScheme() + "://" + uri.getHost() + (uri.getPort() < 0 ? Const.Common.EMPTY : ":" + uri.getPort()) + uri.getRawPath();
         return response;
+    }
+
+    public void writeRequest(URI uri, String method, String request) {
+        if (!logProperties.getApiEnabled()) {
+            return;
+        }
+        try {
+            LoggerFactory.getLogger(Const.Common.API_LOGGER).atInfo()
+                .log("{} {}\nRequest: {}", method, safeUrl(uri), request);
+        } catch (RuntimeException ignored) {
+            // Logging must never interrupt a request.
+        }
+    }
+
+    public void writeResponse(URI uri, int status, String response, long started) {
+        if (!logProperties.getApiEnabled()) {
+            return;
+        }
+        try {
+            LoggerFactory.getLogger(Const.Common.API_LOGGER).atInfo()
+                .log("{} {}\nResponse: {}\nDuration: {} ms",
+                    status, safeUrl(uri), response,
+                    TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started));
+        } catch (RuntimeException ignored) {
+            // Logging must never interrupt a request.
+        }
     }
 }

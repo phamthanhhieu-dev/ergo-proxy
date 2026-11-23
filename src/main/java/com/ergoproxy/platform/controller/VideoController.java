@@ -1,6 +1,7 @@
 package com.ergoproxy.platform.controller;
 
 import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
 import com.ergoproxy.platform.service.video.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,8 @@ public class VideoController {
     private final VideoService videoService;
 
     @PostMapping(Const.Path.SEARCH)
-    public List<?> search(@RequestBody String source, @RequestParam String query) throws Exception {
-        var response = videoService.search(source, query);
+    public List<?> search(@RequestBody SearchRequestDTO request) throws Exception {
+        var response = videoService.search(request);
         return response;
     }
 }

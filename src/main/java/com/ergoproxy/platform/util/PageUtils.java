@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.util;
 
-import com.ergoproxy.platform.model.dto.PaginationDTO;
+import com.ergoproxy.platform.model.dto.pagination.PaginationResponseDTO;
 
 public final class PageUtils {
 
@@ -30,7 +30,7 @@ public final class PageUtils {
         return response;
     }
 
-    public static <T extends PaginationDTO> void setPagination(T response, long total, int page, int size) {
+    public static <T extends PaginationResponseDTO> void setPagination(T response, long total, int page, int size) {
         response.setPage(page);
         response.setSize(size);
         response.setTotal(total);

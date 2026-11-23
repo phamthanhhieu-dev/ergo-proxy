@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Configuration
-public class ReanimeCfg {
+public class ReanimeProperties {
 
     @Value("${reanime.api.url:https://reanime.cz}")
     private String reanimeApiUrl;

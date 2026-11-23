@@ -35,19 +35,20 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper input = new ContentCachingRequestWrapper(request, apiLoggingWriter.limit());
         LoggedResponse output = new LoggedResponse(response, apiLoggingWriter.limit());
         AtomicBoolean logged = new AtomicBoolean();
-        // Forms are small metadata requests; never read video/ZIP content to log it.
+        URI uri = URI.create(request.getRequestURL().toString());
+
         String parameters = apiLoggingWriter.parameters(input.getParameterMap());
+        apiLoggingWriter.writeRequest(uri, request.getMethod(), parameters);
+
         Runnable finish = () -> {
             if (!logged.compareAndSet(false, true)) {
                 return;
             }
-            String requestLog =
-                input.getContentType() != null && input.getContentType().contains(Const.Common.JSON)
-                    ? apiLoggingWriter.body(input.getContentAsByteArray(), input.getContentType(), false)
-                    : parameters;
-            String responseLog = output.getStatus() + " " + apiLoggingWriter.body(output.prefix.toByteArray(), output.getContentType(), output.truncated);
-            apiLoggingWriter.write(URI.create(request.getRequestURL().toString()), request.getMethod(), requestLog, responseLog, started);
+            String responseLog = output.getStatus() + " " +
+                apiLoggingWriter.body(output.prefix.toByteArray(), output.getContentType(), output.truncated);
+            apiLoggingWriter.writeResponse(uri, output.getStatus(), responseLog.substring(responseLog.indexOf(' ') + 1), started);
         };
+
         try {
             chain.doFilter(input, output);
         } finally {
@@ -80,7 +81,6 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
             }
         }
     }
-
     /**
      * Bounded tee: bytes go immediately to Chrome, never accumulate an entire video/ZIP.
      */

@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReanimeSearchRequestDTO {
+    private String q; //q = title movie
     private String genre;
     private String season;
     private String format;

@@ -1,6 +1,7 @@
 package com.ergoproxy.platform.service.video;
 
 import com.ergoproxy.platform.common.exception.LogicException;
+import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +29,8 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public List<?> search(String source, String query) {
-        var response = getSource(source).search(query);
+    public List<?> search(SearchRequestDTO searchRequestDTO) {
+        var response = getSource(searchRequestDTO.getSource()).search(searchRequestDTO);
         return response;
     }
 }

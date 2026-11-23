@@ -1,10 +1,11 @@
 package com.ergoproxy.platform.model.dto.video;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ergoproxy.platform.model.dto.pagination.PaginationResponseDTO;
+import lombok.Data;
 
 import java.util.List;
-
-public class VideoDTO {
+@Data
+public class VideoResponseDTO extends PaginationResponseDTO {
     private VideoTitleDTO title;
     private CoverImageDTO coverImage;
     private String format;

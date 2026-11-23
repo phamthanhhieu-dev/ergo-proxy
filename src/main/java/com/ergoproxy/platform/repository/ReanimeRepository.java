@@ -1,12 +1,11 @@
 package com.ergoproxy.platform.repository;
 
 import com.ergoproxy.platform.common.config.client.ReanimeConfiguration;
-import com.ergoproxy.platform.common.config.configmapping.ReanimeCfg;
+import com.ergoproxy.platform.common.config.configmapping.ReanimeProperties;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriBuilder;
 
 import java.net.URI;
@@ -16,7 +15,7 @@ import java.net.URI;
 public class ReanimeRepository {
 
     private final ReanimeConfiguration reanimeConfiguration;
-    private final ReanimeCfg reanimeCfg;
+    private final ReanimeProperties reanimeProperties;
 
     public ReanimeSearchResponseDTO search(ReanimeSearchRequestDTO request) {
         return reanimeConfiguration.get()
@@ -26,8 +25,11 @@ public class ReanimeRepository {
     }
 
     private URI buildSearchUri(UriBuilder builder, ReanimeSearchRequestDTO request) {
-        builder.path(reanimeCfg.getReanimeApiPath() + "/search");
+        builder.path(reanimeProperties.getReanimeApiPath() + "/search");
 
+        if (request.getQ() != null && !request.getQ().isBlank()) {
+            builder.queryParam("q", request.getQ());
+        }
         if (request.getGenre() != null) {
             builder.queryParam("genre", request.getGenre());
         }

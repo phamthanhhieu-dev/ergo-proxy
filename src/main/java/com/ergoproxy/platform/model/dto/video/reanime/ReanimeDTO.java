@@ -17,8 +17,9 @@ public class ReanimeDTO {
 
     @JsonProperty("anilist_id")
     private Long anilistId;
-
     private VideoTitleDTO title;
+
+    @JsonProperty("cover_image")
     private CoverImageDTO coverImage;
     private String format;
     private String status;

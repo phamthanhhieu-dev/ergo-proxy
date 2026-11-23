@@ -46,6 +46,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>springboot4-dotenv</artifactId>
+            <version>5.1.0</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -75,7 +86,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
+                            <version>1.18.46</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
