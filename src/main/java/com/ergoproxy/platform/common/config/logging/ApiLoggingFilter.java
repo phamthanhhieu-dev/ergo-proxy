@@ -81,6 +81,7 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
             }
         }
     }
+
     /**
      * Bounded tee: bytes go immediately to Chrome, never accumulate an entire video/ZIP.
      */

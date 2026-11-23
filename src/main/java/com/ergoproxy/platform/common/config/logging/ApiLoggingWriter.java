@@ -1,12 +1,10 @@
 package com.ergoproxy.platform.common.config.logging;
 
 import com.ergoproxy.platform.common.config.configmapping.LogProperties;
-import com.ergoproxy.platform.common.config.configmapping.OpenSubtitleProperties;
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.util.Messages;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -40,11 +38,11 @@ public class ApiLoggingWriter {
         Const.Common.USERNAME
     );
     private static final Pattern URL = Pattern.compile(Const.Regex.DIAGNOSTIC_URL, Pattern.CASE_INSENSITIVE);
-    private final ObjectMapper objectMapper;
-    private final LogProperties logProperties;
     private static final Pattern SECRET_VALUE = Pattern.compile(
         "(?i)(\"(?:password|passwordhash|token|access[-_]?token|refresh[-_]?token|authorization|api[-_]?key|secret|cookie|configuredtoken|credentialref|privatekey|username)\"\\s*:\\s*)\"(?:\\\\.|[^\"\\\\])*(?:\"|$)"
     );
+    private final ObjectMapper objectMapper;
+    private final LogProperties logProperties;
 
     public int limit() {
         int response = Math.max(1, Math.min(logProperties.getApiMaxBodySize(), 1024 * 1024));

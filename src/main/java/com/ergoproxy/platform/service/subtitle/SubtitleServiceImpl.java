@@ -25,15 +25,14 @@ public class SubtitleServiceImpl implements SubtitleService {
 
     @Override
     public List<?> search(String source, String query, String language, int season, int episode, String imdb, boolean movie, int page) {
-        StringBuilder searchQuery = new StringBuilder()
-            .append("query=").append(query)
-            .append("&language=").append(language)
-            .append("&season=").append(season)
-            .append("&episode=").append(episode)
-            .append("&imdb=").append(imdb)
-            .append("&movie=").append(movie)
-            .append("&page=").append(page);
-        List<?> response = getSource(source).search(searchQuery.toString());
+        String searchQuery = "query=" + query +
+            "&language=" + language +
+            "&season=" + season +
+            "&episode=" + episode +
+            "&imdb=" + imdb +
+            "&movie=" + movie +
+            "&page=" + page;
+        List<?> response = getSource(source).search(searchQuery);
         return response;
     }
 }

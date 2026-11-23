@@ -4,6 +4,7 @@ import com.ergoproxy.platform.model.dto.pagination.PaginationResponseDTO;
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class VideoResponseDTO extends PaginationResponseDTO {
     private VideoTitleDTO title;
