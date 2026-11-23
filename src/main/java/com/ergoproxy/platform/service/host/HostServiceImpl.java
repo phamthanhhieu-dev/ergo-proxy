@@ -1,26 +1,21 @@
 package com.ergoproxy.platform.service.host;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class HostServiceImpl implements HostService {
 
-    private final Map<String, HostRouter> subtitleSources;
-
-    public HostServiceImpl(List<HostRouter> contracts) {
-        this.subtitleSources = contracts.stream()
-            .collect(Collectors
-                .toMap(HostRouter::getSource, Function.identity()));
-    }
+    private final List<HostRouter> contracts;
 
     private HostRouter getSource(String source) {
-        HostRouter contract = subtitleSources.get(source);
-        return contract;
+        return contracts.stream()
+            .filter(contract -> contract.getSource().equals(source))
+            .findFirst()
+            .orElseThrow();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.ergoproxy.platform.model.dto.pagination;
+package com.ergoproxy.platform.model.dto;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.ergoproxy.platform.common.config.logging;
+package com.ergoproxy.platform.common.configuration.logging;
 
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.common.exception.LogicException;

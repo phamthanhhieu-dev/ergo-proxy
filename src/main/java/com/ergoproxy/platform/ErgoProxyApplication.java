@@ -1,6 +1,6 @@
 package com.ergoproxy.platform;
 
-import com.ergoproxy.platform.common.config.configmapping.ApplicationProperties;
+import com.ergoproxy.platform.common.configuration.properties.ApplicationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

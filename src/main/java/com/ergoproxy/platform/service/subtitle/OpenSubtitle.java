@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.service.subtitle;
 
-import com.ergoproxy.platform.common.config.configmapping.OpenSubtitleProperties;
+import com.ergoproxy.platform.common.configuration.properties.OpenSubtitleProperties;
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.model.dto.SubtitleDTO;
 import lombok.RequiredArgsConstructor;

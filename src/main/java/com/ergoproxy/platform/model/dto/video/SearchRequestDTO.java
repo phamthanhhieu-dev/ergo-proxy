@@ -1,6 +1,6 @@
 package com.ergoproxy.platform.model.dto.video;
 
-import com.ergoproxy.platform.model.dto.pagination.PaginationDTO;
+import com.ergoproxy.platform.model.dto.PaginationDTO;
 import lombok.Data;
 
 @Data

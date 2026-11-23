@@ -1,10 +1,11 @@
 package com.ergoproxy.platform.service.video;
 
 import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
-
-import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 public interface VideoService {
 
-    List<?> search(SearchRequestDTO searchRequestDTO);
+    ResponseEntity<?> search(SearchRequestDTO searchRequestDTO);
+
+    ResponseEntity<?> getDetail(String source, String query);
 }

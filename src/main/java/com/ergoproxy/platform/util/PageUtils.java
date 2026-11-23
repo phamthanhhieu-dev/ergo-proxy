@@ -1,7 +1,5 @@
 package com.ergoproxy.platform.util;
 
-import com.ergoproxy.platform.model.dto.pagination.PaginationResponseDTO;
-
 public final class PageUtils {
 
     private static final int DEFAULT_PAGE = 0;

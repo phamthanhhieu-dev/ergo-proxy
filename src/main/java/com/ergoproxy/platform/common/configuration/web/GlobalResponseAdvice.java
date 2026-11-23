@@ -1,4 +1,4 @@
-package com.ergoproxy.platform.common.config.web;
+package com.ergoproxy.platform.common.configuration.web;
 
 import com.ergoproxy.platform.ErgoProxyApplication;
 import com.ergoproxy.platform.common.exception.LogicException;

@@ -1,8 +1,10 @@
-package com.ergoproxy.platform.common.config.configmapping;
+package com.ergoproxy.platform.common.configuration.properties;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.Duration;
 
 @Getter
 @Configuration

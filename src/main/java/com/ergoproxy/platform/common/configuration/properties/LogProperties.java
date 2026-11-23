@@ -1,4 +1,4 @@
-package com.ergoproxy.platform.common.config.configmapping;
+package com.ergoproxy.platform.common.configuration.properties;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

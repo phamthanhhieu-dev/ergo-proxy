@@ -268,6 +268,7 @@ public final class Const {
         public static final String VIDEO = "/video";
         public static final String SUBTITLE = "/subtitle";
         public static final String SEARCH = "/search";
+        public static final String GET = "/get";
         public static final String GET_EMBED_URL = "/get-embed-url";
         public static final String ANIME = "/anime";
         public static final String NATIVE_ARCHIVE = "/native-archive";
@@ -281,5 +282,7 @@ public final class Const {
         public static final String ANIMEVSUB = "animevsub";
         //host
         public static final String FLIX_CLOUD = "flix_cloud";
+        //cache
+        public static final String REDIS = "redis";
     }
 }

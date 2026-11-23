@@ -1,12 +1,13 @@
 package com.ergoproxy.platform.model.dto.video;
 
-import com.ergoproxy.platform.model.dto.pagination.PaginationResponseDTO;
+import com.ergoproxy.platform.model.dto.SourceDTO;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class VideoResponseDTO extends PaginationResponseDTO {
+public class VideoDTO {
+    private SourceDTO source;
     private VideoTitleDTO title;
     private CoverImageDTO coverImage;
     private String format;

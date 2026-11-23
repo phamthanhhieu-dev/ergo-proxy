@@ -1,7 +1,7 @@
 package com.ergoproxy.platform.repository;
 
-import com.ergoproxy.platform.common.config.client.ReanimeConfiguration;
-import com.ergoproxy.platform.common.config.configmapping.ReanimeProperties;
+import com.ergoproxy.platform.common.configuration.client.ReanimeConfiguration;
+import com.ergoproxy.platform.common.configuration.properties.ReanimeProperties;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchResponseDTO;
 import lombok.RequiredArgsConstructor;
