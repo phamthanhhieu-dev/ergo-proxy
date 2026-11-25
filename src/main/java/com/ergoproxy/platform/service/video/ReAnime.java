@@ -34,7 +34,7 @@ public class ReAnime implements VideoRouter {
     @Override
     public ResponseEntity<?> search(SearchRequestDTO searchRequestDTO) {
         if (searchRequestDTO == null) {
-            throw new LogicException("VQRA_00001", "anime.query.invalid");
+            throw new LogicException("VQRA_00001", "search.query.invalid");
         }
         ReanimeSearchRequestDTO reanimeSearchRequestDTO = videoMapper.searchRequestToReanimeSearchRequest(searchRequestDTO);
         ReanimeSearchResponseDTO reanimeSearchResponseDTO = reanimeRepository.search(reanimeSearchRequestDTO);

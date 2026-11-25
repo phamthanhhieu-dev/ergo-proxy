@@ -17,7 +17,7 @@ public class CacheServiceImpl implements CacheService {
         return contracts.stream()
             .filter(contract -> contract.getSource().equals(source))
             .findFirst()
-            .orElseThrow(() -> new LogicException("GSC_00001", source));
+            .orElseThrow(() -> new LogicException("GSC_00001", "host.source.unsupported", source));
     }
 
     @Override

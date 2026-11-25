@@ -1,5 +1,6 @@
 package com.ergoproxy.platform.service.host;
 
+import com.ergoproxy.platform.common.exception.LogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class HostServiceImpl implements HostService {
         return contracts.stream()
             .filter(contract -> contract.getSource().equals(source))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new LogicException("GSH_00002", "host.source.unsupported", source));
     }
 
     @Override

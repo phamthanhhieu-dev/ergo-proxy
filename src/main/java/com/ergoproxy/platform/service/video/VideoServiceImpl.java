@@ -38,7 +38,7 @@ public class VideoServiceImpl implements VideoService {
         return contracts.stream()
             .filter(contract -> contract.getSource().equals(source))
             .findFirst()
-            .orElseThrow(() -> new LogicException("GSV_00002", "video.source.unsupported"));
+            .orElseThrow(() -> new LogicException("GSV_00002", "video.source.unsupported", source));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public ResponseEntity<?> getDetailByUUID(String uuid) {
+    public ResponseEntity<?> getByUUID(String uuid) {
         List<VideoDTO> videos = cacheService.hashValues(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, VideoDTO.class);
         var response = videos.stream().filter(videoDTO -> videoDTO.getUUID().equals(uuid)).findFirst();
         return ResponseEntity.ok().body(response);

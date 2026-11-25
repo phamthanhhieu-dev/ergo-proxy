@@ -1,5 +1,6 @@
 package com.ergoproxy.platform.service.subtitle;
 
+import com.ergoproxy.platform.common.exception.LogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class SubtitleServiceImpl implements SubtitleService {
         return contracts.stream()
             .filter(contract -> contract.getSource().equals(source))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new LogicException("GSS_00002", "subtitle.source.unsupported", source));
     }
     @Override
     public List<?> search(String source, String query, String language, int season, int episode, String imdb, boolean movie, int page) {
