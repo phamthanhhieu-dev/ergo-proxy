@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class VideoTitleDTO {
+public class TitleDTO {
     private String english;
     @JsonProperty("native")
     private String nativeTitle;

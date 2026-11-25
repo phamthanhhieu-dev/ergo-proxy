@@ -13,6 +13,8 @@ public interface CacheRouter {
 
     void hashSet(String key, String field, Object value, Duration duration);
 
+    <T> T hashGet(String key, String field, Class<T> clazz);
+
     <T> List<T> hashValues(String key, Class<T> type);
 
     Boolean delete(String key);

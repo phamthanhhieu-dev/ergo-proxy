@@ -9,7 +9,7 @@ import java.util.List;
 public class VideoDTO {
     private String UUID;
     private SourceDTO source;
-    private VideoTitleDTO title;
+    private TitleDTO title;
     private CoverImageDTO coverImage;
     private String format;
     private String status;

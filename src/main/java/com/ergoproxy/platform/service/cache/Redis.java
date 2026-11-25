@@ -34,6 +34,12 @@ public class Redis implements CacheRouter {
         redisTemplate.expire(key, duration);
     }
 
+    @Override
+    public <T> T hashGet(String key, String field, Class<T> type) {
+        Object value = redisTemplate.opsForHash().get(key, field);
+        return value == null ? null : objectMapper.convertValue(value, type);
+    }
+
     public <T> List<T> hashValues(String key, Class<T> type) {
         return redisTemplate.opsForHash().values(key).stream()
             .map(value -> objectMapper.convertValue(value, type))

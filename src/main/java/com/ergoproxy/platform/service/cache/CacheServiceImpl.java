@@ -36,6 +36,11 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public <T> T hashGet(String source, String key, String field, Class<T> clazz) {
+        return getSource(source).hashGet(key, field, clazz);
+    }
+
+    @Override
     public <T> List<T> hashValues(String source, String key, Class<T> clazz) {
         return getSource(source).hashValues(key, clazz);
     }

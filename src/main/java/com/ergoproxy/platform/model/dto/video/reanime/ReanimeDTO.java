@@ -1,7 +1,8 @@
 package com.ergoproxy.platform.model.dto.video.reanime;
 
+import com.ergoproxy.platform.model.dto.video.GenreDTO;
 import com.ergoproxy.platform.model.dto.video.CoverImageDTO;
-import com.ergoproxy.platform.model.dto.video.VideoTitleDTO;
+import com.ergoproxy.platform.model.dto.video.TitleDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,13 +18,13 @@ public class ReanimeDTO {
 
     @JsonProperty("anilist_id")
     private Long anilistId;
-    private VideoTitleDTO title;
+    private TitleDTO title;
 
     @JsonProperty("cover_image")
     private CoverImageDTO coverImage;
     private String format;
     private String status;
-    private List<String> genres;
+    private List<GenreDTO> genres;
     private String season;
 
     @JsonProperty("season_year")

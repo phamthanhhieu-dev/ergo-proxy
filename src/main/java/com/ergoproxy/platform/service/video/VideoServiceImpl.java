@@ -7,17 +7,24 @@ import com.ergoproxy.platform.common.exception.LogicException;
 import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.VideoDTO;
 import com.ergoproxy.platform.service.cache.CacheService;
+import com.ergoproxy.platform.util.DataUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VideoServiceImpl implements VideoService {
@@ -25,6 +32,7 @@ public class VideoServiceImpl implements VideoService {
     private final List<VideoRouter> contracts;
     private final CacheProperties cacheProperties;
     private final CacheService cacheService;
+    private final ObjectMapper objectMapper;
 
     private VideoRouter getSource(String source) {
         return contracts.stream()
@@ -35,12 +43,36 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public ResponseEntity<?> search(SearchRequestDTO searchRequestDTO) {
+        String requestStr = objectMapper.writeValueAsString(searchRequestDTO);
+        String searchKey = Const.CacheField.SEARCH + UUID.nameUUIDFromBytes((searchRequestDTO.getSource() + Const.Formatter.SPLIT_STR_COLON + requestStr).getBytes(StandardCharsets.UTF_8));
+        List<String> uuids = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.SEARCH_UUIDS, searchKey, List.class);
+        if (!DataUtils.isNullOrEmpty(uuids)) {
+            //neu ton tai, thuc hien lay thong tin da luu  trong redis dua tren uuid
+            List<VideoDTO> videos = new ArrayList<>();
+            for (String uuid : uuids) {
+                VideoDTO videoDTO = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + uuid, VideoDTO.class);
+                videos.add(videoDTO);
+            }
+            var response = new PageImpl<>(videos);
+            return ResponseEntity.ok(response);
+        }
+        //neu khong co cache thi thuc hien goi dich vu khac lay thong tin
         var response = getSource(searchRequestDTO.getSource()).search(searchRequestDTO);
         if (response.getBody() instanceof Page<?> page) {
+            List<String> videoUUIDs = new ArrayList<>();
             for (Object item : page.getContent()) {
                 if (item instanceof VideoDTO videoDTO) {
-                    videoDTO.setUUID(UUID.randomUUID().toString());
-                    cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, videoDTO.getUUID(), videoDTO, cacheProperties.getVideoCacheTtl());
+                    String videoUUID = UUID.nameUUIDFromBytes(videoDTO.getTitle().getRomaji().trim().toLowerCase()
+                        .getBytes(StandardCharsets.UTF_8))
+                        .toString();
+                    videoDTO.setUUID(videoUUID);
+                    videoUUIDs.add(videoUUID);
+                    // chi luu thong tin neu chua ton tai
+                    VideoDTO cachedVideo = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + videoUUID, VideoDTO.class);
+                    if (cachedVideo == null) {
+                        cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + videoUUID, videoDTO, cacheProperties.getVideoCacheTtl());
+                    }
+                    cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.SEARCH_UUIDS, searchKey, videoUUIDs, cacheProperties.getVideoCacheTtl());
                 }
             }
         }

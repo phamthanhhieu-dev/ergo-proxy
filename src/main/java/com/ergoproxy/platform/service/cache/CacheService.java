@@ -11,6 +11,8 @@ public interface CacheService {
 
     void hashSet(String source, String key, String field, Object value, Duration duration);
 
+    <T> T hashGet(String source, String key, String field, Class<T> clazz);
+
     <T> List<T> hashValues(String source, String key, Class<T> clazz);
 
     Boolean delete(String source, String key);
