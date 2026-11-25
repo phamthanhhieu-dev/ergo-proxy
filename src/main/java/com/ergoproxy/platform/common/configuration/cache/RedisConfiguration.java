@@ -1,4 +1,4 @@
-package com.ergoproxy.platform.common.configuration.redis;
+package com.ergoproxy.platform.common.configuration.cache;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

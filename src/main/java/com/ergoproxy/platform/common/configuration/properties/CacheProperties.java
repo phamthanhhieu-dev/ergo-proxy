@@ -14,9 +14,6 @@ public class CacheProperties {
     @Value("${video.cache.ttl:24h}")
     private Duration videoCacheTtl;
 
-    @Value("${video.cache.key:videos:data}")
-    private String videoCacheKey;
-
     //redis
     @Value("${spring.data.redis.host:localhost}")
     private String host;

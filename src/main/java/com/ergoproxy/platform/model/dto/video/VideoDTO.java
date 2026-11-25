@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class VideoDTO {
+    private String UUID;
     private SourceDTO source;
     private VideoTitleDTO title;
     private CoverImageDTO coverImage;

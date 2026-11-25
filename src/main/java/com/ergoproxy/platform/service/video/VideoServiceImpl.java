@@ -39,7 +39,8 @@ public class VideoServiceImpl implements VideoService {
         if (response.getBody() instanceof Page<?> page) {
             for (Object item : page.getContent()) {
                 if (item instanceof VideoDTO videoDTO) {
-                    cacheService.hashSet(Const.Source.REDIS, cacheProperties.getVideoCacheKey(), UUID.randomUUID().toString(), videoDTO, cacheProperties.getVideoCacheTtl());
+                    videoDTO.setUUID(UUID.randomUUID().toString());
+                    cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, videoDTO.getUUID(), videoDTO, cacheProperties.getVideoCacheTtl());
                 }
             }
         }
@@ -47,8 +48,9 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public ResponseEntity<?> getDetail(String source, String query) {
-        var response = getSource(source).getDetail(query);
-        return response;
+    public ResponseEntity<?> getDetailByUUID(String uuid) {
+        List<VideoDTO> videos = cacheService.hashValues(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, VideoDTO.class);
+        var response = videos.stream().filter(videoDTO -> videoDTO.getUUID().equals(uuid)).findFirst();
+        return ResponseEntity.ok().body(response);
     }
 }

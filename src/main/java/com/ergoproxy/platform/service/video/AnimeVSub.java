@@ -24,9 +24,4 @@ public class AnimeVSub implements VideoRouter {
         List<Object> response = new ArrayList<>();
         return ResponseEntity.ok(response);
     }
-
-    @Override
-    public ResponseEntity<?> getDetail(String query) {
-        return null;
-    }
 }

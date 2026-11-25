@@ -43,9 +43,4 @@ public class ReAnime implements VideoRouter {
         Page<VideoDTO> response = new PageImpl<>(listVideoDTO, pageable, reanimeSearchResponseDTO.getTotal());
         return ResponseEntity.ok(response);
     }
-
-    @Override
-    public ResponseEntity<?> getDetail(String query) {
-        return null;
-    }
 }

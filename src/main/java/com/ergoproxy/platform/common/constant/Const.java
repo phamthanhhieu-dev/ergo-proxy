@@ -256,6 +256,8 @@ public final class Const {
         public static final String MKV_EXTENSION = ".mkv";
         public static final String SRT_EXTENSION = ".srt";
         public static final String ZIP_EXTENSION = ".zip";
+        public static final String DEFAULT_PAGE_INDEX = "0";
+        public static final String DEFAULT_PAGE_SIZE = "20";
     }
 
     public static final class Version {
@@ -284,5 +286,10 @@ public final class Const {
         public static final String FLIX_CLOUD = "flix_cloud";
         //cache
         public static final String REDIS = "redis";
+    }
+
+    public static final class CacheKey {
+        public static final String VIDEO_DATA = "video:data";
+        public static final String VIDEO_DATA_SEARCH = "video:data:search";;
     }
 }

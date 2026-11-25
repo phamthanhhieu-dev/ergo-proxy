@@ -5,10 +5,7 @@ import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
 import com.ergoproxy.platform.service.video.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,11 +17,16 @@ public class VideoController {
     private final VideoService videoService;
 
     @GetMapping(Const.Path.SEARCH)
-    public ResponseEntity<?> search(@RequestParam String source, @RequestParam String query, @RequestParam String genre, @RequestParam String season,
-                                 @RequestParam String format, @RequestParam String status, @RequestParam String country, @RequestParam String audio,
-                                 @RequestParam String rating, @RequestParam Integer year, @RequestParam String sort, @RequestParam String tag,
-                                 @RequestParam String character, @RequestParam String staff, @RequestParam String studio, @RequestParam Integer page,
-                                 @RequestParam Integer size) throws Exception {
+    public ResponseEntity<?> search(@RequestParam String source, @RequestParam(required = false) String query,
+                                    @RequestParam(required = false) String genre, @RequestParam (required = false)String season,
+                                    @RequestParam(required = false) String format, @RequestParam(required = false) String status,
+                                    @RequestParam(required = false) String country, @RequestParam(required = false) String audio,
+                                    @RequestParam(required = false) String rating, @RequestParam(required = false) Integer year,
+                                    @RequestParam(required = false) String sort, @RequestParam(required = false) String tag,
+                                    @RequestParam(required = false) String character, @RequestParam(required = false) String staff,
+                                    @RequestParam(required = false) String studio,
+                                    @RequestParam(defaultValue = Const.Common.DEFAULT_PAGE_INDEX) Integer page,
+                                    @RequestParam(defaultValue = Const.Common.DEFAULT_PAGE_SIZE) Integer size) throws Exception {
         SearchRequestDTO request = new SearchRequestDTO();
         request.setSource(source);
         request.setTitle(query);
@@ -47,9 +49,9 @@ public class VideoController {
         return response;
     }
 
-    @GetMapping(Const.Path.GET)
-    public ResponseEntity<?> get(@RequestParam String source, @RequestParam String query) throws Exception {
-        var response = videoService.getDetail(source, query);
+    @GetMapping(Const.Path.GET + "/{uuid}")
+    public ResponseEntity<?> getByUUID(@PathVariable String uuid) throws Exception {
+        var response = videoService.getDetailByUUID(uuid);
         return response;
     }
 }

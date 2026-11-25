@@ -8,7 +8,5 @@ import java.util.List;
 public interface VideoRouter {
     String getSource();
 
-    ResponseEntity<?>  search(SearchRequestDTO searchRequestDTO);
-
-    ResponseEntity<?> getDetail(String query);
+    ResponseEntity<?> search(SearchRequestDTO searchRequestDTO);
 }
