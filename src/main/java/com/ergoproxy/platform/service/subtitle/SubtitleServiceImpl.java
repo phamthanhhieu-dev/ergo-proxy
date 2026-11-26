@@ -18,6 +18,7 @@ public class SubtitleServiceImpl implements SubtitleService {
             .findFirst()
             .orElseThrow(() -> new LogicException("GSS_00002", "subtitle.source.unsupported", source));
     }
+
     @Override
     public List<?> search(String source, String query, String language, int season, int episode, String imdb, boolean movie, int page) {
         String searchQuery = "query=" + query +

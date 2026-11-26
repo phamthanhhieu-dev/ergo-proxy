@@ -1,7 +1,7 @@
 package com.ergoproxy.platform.common.configuration.client;
 
-import com.ergoproxy.platform.common.configuration.properties.ReanimeProperties;
 import com.ergoproxy.platform.common.configuration.logging.HttpLoggingInterceptor;
+import com.ergoproxy.platform.common.configuration.properties.ReanimeProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 

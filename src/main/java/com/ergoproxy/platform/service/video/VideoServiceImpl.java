@@ -1,6 +1,5 @@
 package com.ergoproxy.platform.service.video;
 
-import com.ergoproxy.platform.common.configuration.properties.ApplicationProperties;
 import com.ergoproxy.platform.common.configuration.properties.CacheProperties;
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.common.exception.LogicException;
@@ -10,7 +9,6 @@ import com.ergoproxy.platform.service.cache.CacheService;
 import com.ergoproxy.platform.util.DataUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,10 +17,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

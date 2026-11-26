@@ -68,7 +68,8 @@ public final class Const {
 
     public static final class CacheKey {
         public static final String VIDEO_DATA = "video:data";
-        public static final String SEARCH_UUIDS = "search:uuids";;
+        public static final String SEARCH_UUIDS = "search:uuids";
+        ;
     }
 
     public static final class CacheField {

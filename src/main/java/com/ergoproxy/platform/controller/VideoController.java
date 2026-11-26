@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(Const.Path.API + Const.Version.V1 + Const.Path.VIDEO)
 @RequiredArgsConstructor
@@ -18,7 +16,7 @@ public class VideoController {
 
     @GetMapping(Const.Path.SEARCH)
     public ResponseEntity<?> search(@RequestParam String source, @RequestParam(required = false) String query,
-                                    @RequestParam(required = false) String genre, @RequestParam (required = false)String season,
+                                    @RequestParam(required = false) String genre, @RequestParam(required = false) String season,
                                     @RequestParam(required = false) String format, @RequestParam(required = false) String status,
                                     @RequestParam(required = false) String country, @RequestParam(required = false) String audio,
                                     @RequestParam(required = false) String rating, @RequestParam(required = false) Integer year,
