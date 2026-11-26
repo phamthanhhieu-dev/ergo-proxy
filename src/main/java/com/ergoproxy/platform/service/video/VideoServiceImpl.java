@@ -43,46 +43,46 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public ResponseEntity<?> search(SearchRequestDTO searchRequestDTO) {
+        List<VideoDTO> videos = new ArrayList<>();
+        //kiem tra truoc xong cache, neu da ton tai thi lay trong cache
         String requestStr = objectMapper.writeValueAsString(searchRequestDTO);
         String searchKey = Const.CacheField.SEARCH + UUID.nameUUIDFromBytes((searchRequestDTO.getSource() + Const.Formatter.SPLIT_STR_COLON + requestStr).getBytes(StandardCharsets.UTF_8));
         List<String> uuids = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.SEARCH_UUIDS, searchKey, List.class);
         if (!DataUtils.isNullOrEmpty(uuids)) {
-            //neu ton tai, thuc hien lay thong tin da luu  trong redis dua tren uuid
-            List<VideoDTO> videos = new ArrayList<>();
+            //neu ton tai, thuc hien lay thong tin da luu trong cache dua tren uuid
             for (String uuid : uuids) {
                 VideoDTO videoDTO = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + uuid, VideoDTO.class);
                 videos.add(videoDTO);
             }
-            var response = new PageImpl<>(videos);
-            return ResponseEntity.ok(response);
-        }
-        //neu khong co cache thi thuc hien goi dich vu khac lay thong tin
-        var response = getSource(searchRequestDTO.getSource()).search(searchRequestDTO);
-        if (response.getBody() instanceof Page<?> page) {
+        } else {
+            //neu khong co cache thi thuc hien goi dich vu khac lay thong tin
+            videos = getSource(searchRequestDTO.getSource()).search(searchRequestDTO);
+            //Luu thong tin vao cache neu chua ton tai trong cache
             List<String> videoUUIDs = new ArrayList<>();
-            for (Object item : page.getContent()) {
-                if (item instanceof VideoDTO videoDTO) {
-                    String videoUUID = UUID.nameUUIDFromBytes(videoDTO.getTitle().getRomaji().trim().toLowerCase()
-                        .getBytes(StandardCharsets.UTF_8))
-                        .toString();
-                    videoDTO.setUUID(videoUUID);
-                    videoUUIDs.add(videoUUID);
-                    // chi luu thong tin neu chua ton tai
-                    VideoDTO cachedVideo = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + videoUUID, VideoDTO.class);
-                    if (cachedVideo == null) {
-                        cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + videoUUID, videoDTO, cacheProperties.getVideoCacheTtl());
-                    }
-                    cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.SEARCH_UUIDS, searchKey, videoUUIDs, cacheProperties.getVideoCacheTtl());
+            for (VideoDTO videoDTO : videos) {
+                String videoUUID = UUID.nameUUIDFromBytes(videoDTO.getTitle().getRomaji().trim().toLowerCase().getBytes(StandardCharsets.UTF_8)).toString();
+                videoDTO.setUUID(videoUUID);
+                videoUUIDs.add(videoUUID);
+                VideoDTO cachedVideo = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + videoUUID, VideoDTO.class);
+                if (cachedVideo == null) {
+                    cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + videoUUID, videoDTO, cacheProperties.getVideoCacheTtl());
                 }
             }
+            cacheService.hashSet(Const.Source.REDIS, Const.CacheKey.SEARCH_UUIDS, searchKey, videoUUIDs, cacheProperties.getVideoCacheTtl());
         }
-        return response;
+        return ResponseEntity.ok(new PageImpl<>(videos));
     }
 
     @Override
     public ResponseEntity<?> getByUUID(String uuid) {
+        if (DataUtils.isNullOrEmpty(uuid)) {
+            throw new LogicException("GBUV_000001", "uuid.invalid");
+        }
         List<VideoDTO> videos = cacheService.hashValues(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, VideoDTO.class);
         var response = videos.stream().filter(videoDTO -> videoDTO.getUUID().equals(uuid)).findFirst();
+        if (DataUtils.isNullOrEmpty(response)) {
+            throw new LogicException("GBUV_000002", "video.with.uuid.is.null.or.empty", uuid);
+        }
         return ResponseEntity.ok().body(response);
     }
 }

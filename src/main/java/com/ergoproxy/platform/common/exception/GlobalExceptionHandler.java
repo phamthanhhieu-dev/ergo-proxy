@@ -3,6 +3,7 @@ package com.ergoproxy.platform.common.exception;
 import com.ergoproxy.platform.model.dto.GlobalApiResponse;
 import com.ergoproxy.platform.util.Messages;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
@@ -73,14 +75,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GlobalApiResponse<Void>> handleException(Exception exception) {
+        log.error("Unexpected exception: ", exception);
         if (exception instanceof ErrorResponse upstream) {
             HttpStatusCode status = upstream.getStatusCode();
             LogicException error = new LogicException(exception, "HEGEH_00001", "request.http.failed", status.value());
-            ResponseEntity<GlobalApiResponse<Void>> response = respond(error, status);
-            return response;
+            return respond(error, status);
         }
         LogicException error = new LogicException(exception, "HEGEH_00002", "request.unexpected.failed", exception.getClass().getSimpleName());
-        ResponseEntity<GlobalApiResponse<Void>> response = respond(error, HttpStatus.INTERNAL_SERVER_ERROR);
-        return response;
+        return respond(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

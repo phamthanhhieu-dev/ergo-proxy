@@ -1,6 +1,5 @@
 package com.ergoproxy.platform.model.dto.video.reanime;
 
-import com.ergoproxy.platform.model.dto.video.GenreDTO;
 import com.ergoproxy.platform.model.dto.video.CoverImageDTO;
 import com.ergoproxy.platform.model.dto.video.TitleDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,7 +23,7 @@ public class ReanimeDTO {
     private CoverImageDTO coverImage;
     private String format;
     private String status;
-    private List<GenreDTO> genres;
+    private List<String> genres;
     private String season;
 
     @JsonProperty("season_year")

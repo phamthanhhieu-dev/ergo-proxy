@@ -10,12 +10,7 @@ import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchResponseDTO;
 import com.ergoproxy.platform.repository.ReanimeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Service
@@ -32,15 +27,13 @@ public class ReAnime implements VideoRouter {
     }
 
     @Override
-    public ResponseEntity<?> search(SearchRequestDTO searchRequestDTO) {
+    public List<VideoDTO> search(SearchRequestDTO searchRequestDTO) {
         if (searchRequestDTO == null) {
             throw new LogicException("VQRA_00001", "search.query.invalid");
         }
         ReanimeSearchRequestDTO reanimeSearchRequestDTO = videoMapper.searchRequestToReanimeSearchRequest(searchRequestDTO);
         ReanimeSearchResponseDTO reanimeSearchResponseDTO = reanimeRepository.search(reanimeSearchRequestDTO);
         List<VideoDTO> listVideoDTO = videoMapper.reanimeToVideoList(reanimeSearchResponseDTO.getResults());
-        Pageable pageable = PageRequest.of(searchRequestDTO.getPage(), searchRequestDTO.getSize());
-        Page<VideoDTO> response = new PageImpl<>(listVideoDTO, pageable, reanimeSearchResponseDTO.getTotal());
-        return ResponseEntity.ok(response);
+        return listVideoDTO;
     }
 }
