@@ -2,6 +2,7 @@ package com.ergoproxy.platform.repository;
 
 import com.ergoproxy.platform.common.configuration.client.ReanimeConfiguration;
 import com.ergoproxy.platform.common.configuration.properties.ReanimeProperties;
+import com.ergoproxy.platform.model.dto.host.reanime.ReanimeHostResponseDTO;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.reanime.ReanimeSearchResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,15 @@ public class ReanimeRepository {
         }
 
         return builder.build();
+    }
+
+    public ReanimeHostResponseDTO getEmbedUrl(Long anilistId, Integer episode) {
+        return reanimeConfiguration.get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/api/flix/{anilistId}/{episode}")
+                .queryParam("mal", anilistId)
+                .build(anilistId, episode))
+            .retrieve()
+            .body(ReanimeHostResponseDTO.class);
     }
 }

@@ -1,12 +1,11 @@
 package com.ergoproxy.platform.controller;
 
 import com.ergoproxy.platform.common.constant.Const;
+import com.ergoproxy.platform.model.dto.host.GetEmbedUrlRequestDTO;
 import com.ergoproxy.platform.service.host.HostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -15,9 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class HostController {
     private final HostService hostService;
 
-    @GetMapping(Const.Path.GET_EMBED_URL)
-    public String getEmbedUrl(@RequestParam String source, @RequestParam String query) throws Exception {
-        var response = hostService.getEmbedUrl(source, query);
+    @GetMapping(Const.Path.GET_EMBED_URL +"/{source}/{anilistId}/{episode}")
+    public ResponseEntity<?> getEmbedUrl(@PathVariable String source, @PathVariable Long anilistId,
+                                         @PathVariable Integer episode) throws Exception {
+        GetEmbedUrlRequestDTO requestDTO = new GetEmbedUrlRequestDTO();
+        requestDTO.setSource(source);
+        requestDTO.setAnilistId(anilistId);
+        requestDTO.setEpisode(episode);
+        var response = hostService.getEmbedUrl(requestDTO);
         return response;
     }
 }

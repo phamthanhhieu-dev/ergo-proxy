@@ -47,9 +47,9 @@ public class VideoController {
         return response;
     }
 
-    @GetMapping(Const.Path.GET + "/{uuid}")
-    public ResponseEntity<?> getByUUID(@PathVariable String uuid) throws Exception {
-        var response = videoService.getByUUID(uuid);
+    @GetMapping(Const.Path.GET_DETAIL + "/{uuid}/{movieName}")
+    public ResponseEntity<?> getDetail(@PathVariable String uuid, @PathVariable String movieName) throws Exception {
+        var response = videoService.getDetail(uuid, movieName);
         return response;
     }
 }

@@ -1,7 +1,9 @@
 package com.ergoproxy.platform.service.host;
 
 import com.ergoproxy.platform.common.exception.LogicException;
+import com.ergoproxy.platform.model.dto.host.GetEmbedUrlRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,9 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
-    public String getEmbedUrl(String source, String test) {
-        var response = getSource(source).getEmbedUrl(test);
-        return "";
+    public ResponseEntity<?> getEmbedUrl(GetEmbedUrlRequestDTO requestDTO) {
+        String source = requestDTO.getSource();
+        var response = getSource(source).getEmbedUrl(requestDTO);
+        return ResponseEntity.ok().body(response);
     }
 }

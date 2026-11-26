@@ -1,14 +1,14 @@
 package com.ergoproxy.platform.model.dto.video;
 
-import com.ergoproxy.platform.model.dto.SourceDTO;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class VideoDTO {
+    private Long anilistId;
     private String UUID;
-    private SourceDTO source;
+    private String source;
     private TitleDTO title;
     private CoverImageDTO coverImage;
     private String format;

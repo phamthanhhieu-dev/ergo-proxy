@@ -38,6 +38,7 @@ public final class Const {
         public static final String JSON = "json";
         public static final String DEFAULT_PAGE_INDEX = "0";
         public static final String DEFAULT_PAGE_SIZE = "20";
+        public static final String EPISODE = "episode";
     }
 
     public static final class Version {
@@ -50,8 +51,9 @@ public final class Const {
         public static final String VIDEO = "/video";
         public static final String SUBTITLE = "/subtitle";
         public static final String SEARCH = "/search";
-        public static final String GET = "/get";
+        public static final String GET_DETAIL = "/get-detail";
         public static final String GET_EMBED_URL = "/get-embed-url";
+        public static final String GET_EPISODES = "/get-episodes";
     }
 
     public static final class Source {

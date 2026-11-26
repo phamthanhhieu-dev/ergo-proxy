@@ -69,15 +69,34 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public ResponseEntity<?> getByUUID(String uuid) {
+    public ResponseEntity<?> getDetail(String uuid, String movieName) {
+        VideoDTO video;
         if (DataUtils.isNullOrEmpty(uuid)) {
             throw new LogicException("GBUV_000001", "uuid.invalid");
         }
-        List<VideoDTO> videos = cacheService.hashValues(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, VideoDTO.class);
-        var response = videos.stream().filter(videoDTO -> videoDTO.getUUID().equals(uuid)).findFirst();
-        if (DataUtils.isNullOrEmpty(response)) {
-            throw new LogicException("GBUV_000002", "video.with.uuid.is.null.or.empty", uuid);
+        if (DataUtils.isNullOrEmpty(movieName)) {
+            throw new LogicException("GBUV_000002", "movie.name.invalid");
         }
-        return ResponseEntity.ok().body(response);
+        video = cacheService.hashGet(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, Const.CacheField.VIDEO + uuid, VideoDTO.class);
+        if (video == null) {
+            SearchRequestDTO searchRequestDTO = new SearchRequestDTO();
+            searchRequestDTO.setSource(Const.Source.REANIME);
+            searchRequestDTO.setTitle(movieName);
+            searchRequestDTO.setPage(1);
+            searchRequestDTO.setSize(20);
+            search(searchRequestDTO);
+            List<VideoDTO> videos = cacheService.hashValues(Const.Source.REDIS, Const.CacheKey.VIDEO_DATA, VideoDTO.class);
+            if (DataUtils.isNullOrEmpty(videos)) {
+                throw new LogicException("GBUV_000003", "video.with.movie.name.is.null.or.empty", movieName);
+            }
+            video = videos.stream().filter(videoDTO -> videoDTO.getTitle().getEnglish().equals(movieName)
+                || videoDTO.getTitle().getRomaji().equals(movieName)
+                || videoDTO.getTitle().getNativeTitle().equals(movieName))
+                .findFirst().orElse(null);
+            if (video == null) {
+                throw new LogicException("GBUV_000004", "video.with.movie.name.is.null.or.empty", movieName);
+            }
+        }
+        return ResponseEntity.ok().body(video);
     }
 }

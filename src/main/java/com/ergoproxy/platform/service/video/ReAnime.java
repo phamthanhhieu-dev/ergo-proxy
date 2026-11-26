@@ -3,6 +3,7 @@ package com.ergoproxy.platform.service.video;
 import com.ergoproxy.platform.common.configuration.properties.ReanimeProperties;
 import com.ergoproxy.platform.common.constant.Const;
 import com.ergoproxy.platform.common.exception.LogicException;
+import com.ergoproxy.platform.mapping.HostMapper;
 import com.ergoproxy.platform.mapping.VideoMapper;
 import com.ergoproxy.platform.model.dto.video.SearchRequestDTO;
 import com.ergoproxy.platform.model.dto.video.VideoDTO;
@@ -35,6 +36,7 @@ public class ReAnime implements VideoRouter {
         ReanimeSearchRequestDTO reanimeSearchRequestDTO = videoMapper.searchRequestToReanimeSearchRequest(searchRequestDTO);
         ReanimeSearchResponseDTO reanimeSearchResponseDTO = reanimeRepository.search(reanimeSearchRequestDTO);
         List<VideoDTO> listVideoDTO = videoMapper.reanimeToVideoList(reanimeSearchResponseDTO.getResults());
+        listVideoDTO.forEach(videoDTO -> videoDTO.setSource(getSource()));
         return listVideoDTO;
     }
 }
