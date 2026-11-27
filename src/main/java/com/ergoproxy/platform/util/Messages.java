@@ -1,7 +1,6 @@
 package com.ergoproxy.platform.util;
 
-import com.ergoproxy.platform.constant.Const;
-import com.ergoproxy.platform.exception.LogicException;
+import com.ergoproxy.platform.common.constant.Const;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -29,19 +28,6 @@ public final class Messages {
         Locale locale = Locale.forLanguageTag(Const.Common.VI);
         MessageFormat formatter = new MessageFormat(pattern, locale);
         String response = formatter.format(values);
-        return response;
-    }
-
-    public static String fromException(Throwable exception) {
-        String response;
-        if (exception instanceof LogicException error) {
-            response = get(error.getMessageKey(), error.getArgs());
-        } else {
-            response = SubtitleDiagnostics.sanitize(exception.getMessage());
-            if (response.isBlank()) {
-                response = get("request.process.failed");
-            }
-        }
         return response;
     }
 }
