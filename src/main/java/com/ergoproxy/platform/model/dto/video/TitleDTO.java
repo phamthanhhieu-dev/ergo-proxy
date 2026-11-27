@@ -11,4 +11,5 @@ public class TitleDTO {
     @JsonProperty("native")
     private String nativeTitle;
     private String romaji;
+    private String vietnamese;
 }

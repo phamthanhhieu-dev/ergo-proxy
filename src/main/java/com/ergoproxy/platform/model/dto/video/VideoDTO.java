@@ -1,5 +1,6 @@
 package com.ergoproxy.platform.model.dto.video;
 
+import com.ergoproxy.platform.model.dto.subtitle.SubtitleDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -23,4 +24,5 @@ public class VideoDTO {
     private Integer averageScore;
     private Long popularity;
     private String rating;
+    private Long imdbId;
 }

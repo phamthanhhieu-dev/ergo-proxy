@@ -1,5 +1,6 @@
 package com.ergoproxy.platform.service.subtitle;
 
+import com.ergoproxy.platform.common.constant.Language;
 import com.ergoproxy.platform.common.exception.LogicException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,11 @@ public class SubtitleServiceImpl implements SubtitleService {
     }
 
     @Override
-    public List<?> search(String source, String query, String language, int season, int episode, String imdb, boolean movie, int page) {
-        String searchQuery = "query=" + query +
-            "&language=" + language +
-            "&season=" + season +
-            "&episode=" + episode +
-            "&imdb=" + imdb +
-            "&movie=" + movie +
-            "&page=" + page;
-        List<?> response = getSource(source).search(searchQuery);
+    public List<?> search(String source, String movieName, String language, Integer seasonNumber, Integer episodeNumber, Integer year, String type,Integer page, Integer size) {
+        if (!Language.isValid(language)) {
+            throw new LogicException("SS_00001", "language.invalid", language);
+        }
+        List<?> response = getSource(source).search(movieName, language, seasonNumber, episodeNumber, year, type, page, size);
         return response;
     }
 }

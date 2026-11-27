@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Configuration
-public class OpenSubtitleProperties {
+public class OpenSubtitlesProperties {
     @Value("${opensubtitles.api.url}")
     private String openSubtitlesApiUrl;
     @Value("${opensubtitles.api-key:}")

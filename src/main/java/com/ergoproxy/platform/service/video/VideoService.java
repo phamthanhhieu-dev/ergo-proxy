@@ -7,5 +7,5 @@ public interface VideoService {
 
     ResponseEntity<?> search(SearchRequestDTO searchRequestDTO);
 
-    ResponseEntity<?> getDetail(String uuid, String movieName);
+    ResponseEntity<?> detail(String uuid, String movieName, Integer year, String type);
 }

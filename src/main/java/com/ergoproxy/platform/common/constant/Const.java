@@ -1,5 +1,7 @@
 package com.ergoproxy.platform.common.constant;
 
+import java.util.List;
+
 public final class Const {
 
     public static final class Regex {
@@ -38,7 +40,6 @@ public final class Const {
         public static final String JSON = "json";
         public static final String DEFAULT_PAGE_INDEX = "0";
         public static final String DEFAULT_PAGE_SIZE = "20";
-        public static final String EPISODE = "episode";
     }
 
     public static final class Version {
@@ -51,14 +52,14 @@ public final class Const {
         public static final String VIDEO = "/video";
         public static final String SUBTITLE = "/subtitle";
         public static final String SEARCH = "/search";
-        public static final String GET_DETAIL = "/get-detail";
+        public static final String DETAIL = "/detail";
         public static final String GET_EMBED_URL = "/get-embed-url";
         public static final String GET_EPISODES = "/get-episodes";
     }
 
     public static final class Source {
         //subtitle
-        public static final String OPEN_SUBTITLE = "open_subtitle";
+        public static final String OPEN_SUBTITLES = "open_subtitles";
         //website
         public static final String REANIME = "reanime";
         public static final String ANIMEVSUB = "animevsub";
@@ -77,6 +78,15 @@ public final class Const {
     public static final class CacheField {
         public static final String VIDEO = "video:";
         public static final String SEARCH = "search:";
+    }
+
+    public static final class VideoType {
+        public static final String TV = "TV";
+        public static final String TVSHOW = "tvshow";
+        public static final List<String> LST_VIDEO_TYPE = List.of(
+            TV,
+            TVSHOW
+        );
     }
 
     public static class Formatter {

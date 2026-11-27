@@ -5,5 +5,5 @@ import java.util.List;
 public interface SubtitleRouter {
     String getSource();
 
-    List<?> search(String query);
+    List<?> search(String movieName, String language, Integer seasonNumber, Integer episodeNumber, Integer year, String type, Integer page, Integer size);
 }
